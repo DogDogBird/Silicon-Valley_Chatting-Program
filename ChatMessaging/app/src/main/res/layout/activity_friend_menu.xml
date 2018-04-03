@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id = "@+id/friendList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Friend List"
+            android:textSize="20dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id = "@+id/friend1"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id = "@+id/friend1Online"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"/>
+        <ImageButton
+            android:id = "@+id/friend1Image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            />
+        <Button
+            android:id = "@+id/friend1name"
+            android:layout_width="110dp"
+            android:layout_height="60dp"
+            android:text = "kyubin"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:textSize = "20dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id = "@+id/friend1stateMessage"
+            android:layout_width="140dp"
+            android:layout_height="60dp"
+            android:text="Wow!! So cool"
+            android:textSize="15dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id = "@+id/friend2"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id = "@+id/friend2Online"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"/>
+        <ImageButton
+            android:id = "@+id/friend2Image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            />
+        <Button
+            android:id = "@+id/friend2name"
+            android:layout_width="110dp"
+            android:layout_height="60dp"
+            android:text = "Tami"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:textSize = "20dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id = "@+id/friend2stateMessage"
+            android:layout_width="140dp"
+            android:layout_height="60dp"
+            android:text="Welcome!"
+            android:textSize="15dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="2"
+    >
+
+    <LinearLayout
+        android:id = "@+id/line1"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        >
+        <TextView
+            android:id = "@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="120dp"
+            android:text = "ID: "
+            android:textSize = "20dp"
+            android:layout_gravity="bottom"/>
+        <EditText
+            android:id = "@+id/editText1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:hint="ID를 입력하세요"
+            android:layout_gravity="bottom"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id = "@+id/line2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <TextView
+            android:id = "@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:text = "Password: "
+            android:textSize = "20dp"/>
+        <EditText
+            android:id = "@+id/editText2"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+
+            android:hint="패스워드를 입력하세요"/>
+    </LinearLayout>
+
+</LinearLayout>
