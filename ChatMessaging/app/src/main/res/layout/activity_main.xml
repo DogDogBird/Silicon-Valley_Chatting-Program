@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="2"
+    android:weightSum="10"
     >
 
     <LinearLayout
@@ -11,7 +11,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="3"
         >
         <TextView
             android:id = "@+id/textView1"
@@ -23,18 +23,19 @@
             android:layout_gravity="bottom"/>
         <EditText
             android:id = "@+id/editText1"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="40dp"
-            android:hint="ID를 입력하세요"
+            android:hint="Write ID"
             android:layout_gravity="bottom"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:id = "@+id/line2"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="4">
         <TextView
             android:id = "@+id/textView2"
             android:layout_width="wrap_content"
@@ -44,10 +45,37 @@
             android:textSize = "20dp"/>
         <EditText
             android:id = "@+id/editText2"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="40dp"
 
-            android:hint="패스워드를 입력하세요"/>
+            android:hint="Write Password"/>
+    </LinearLayout>
+
+    <!--This Layout is consisted of SignIn and SignUp Buttons-->
+    <!--Clicking Signin will check the database of the users and
+    if checked, the other activity will show up-->
+    <!--Clicking Signup will show up the SignUp Activity page and
+    make users to set some information and add that information to the DB-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+        <Button
+            android:id = "@+id/SigninButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:text="Sign in"
+            android:onClick="onButton1Clicked"/>
+        <Button
+            android:id = "@+id/SignupButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:text="Sign up"
+            android:onClick="onButton2Clicked"/>
     </LinearLayout>
 
 </LinearLayout>

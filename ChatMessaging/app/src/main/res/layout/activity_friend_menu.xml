@@ -6,19 +6,26 @@
     >
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id = "@+id/friendList"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id = "@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Friend List"
-            android:textSize="20dp"
-            android:textColor="#000000"
-            android:textStyle="bold"
+            android:onClick="onBackButtonClicked"
+            android:text = "Logout"/>
+        <TextView
+            android:id="@+id/friendList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:text="Friend List"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -51,7 +58,8 @@
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
             android:textSize = "20dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:onClick="onButtonFriend1Clicked"/>
         <TextView
             android:id = "@+id/friend1stateMessage"
             android:layout_width="140dp"
@@ -92,7 +100,8 @@
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
             android:textSize = "20dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:onClick="onButtonfriend2Clicked"/>
         <TextView
             android:id = "@+id/friend2stateMessage"
             android:layout_width="140dp"
