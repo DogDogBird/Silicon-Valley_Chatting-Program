@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 public class Chatting extends AppCompatActivity {
@@ -20,17 +22,17 @@ public class Chatting extends AppCompatActivity {
     private String html = "";
     ProgressHandler mHandler;
     TextView textView;
-    String chatMessage;
+    TextView textView1;
 
     private int value = 0;
-    private boolean running = true;
+    private boolean isRunning = true;
 
     private EditText EDITTEXT;
 
     private BufferedReader networkReader;
     private BufferedWriter networkWriter;
 
-   // private String ip = "61.255.4.166";//IP
+    // private String ip = "61.255.4.166";//IP
     public static final int SERVERPORT = 2222;
 
     @Override
@@ -40,35 +42,53 @@ public class Chatting extends AppCompatActivity {
 
         EDITTEXT = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.chat1);
+
         mHandler = new ProgressHandler();
 
         Button button = (Button) findViewById(R.id.sendButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
+                textView.setText(EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")");
                 EDITTEXT.getText().clear();
-                textView.setText(chatMessage);
             }
         });
 
     }
+
+
 
     public void onStart()
     {
         super.onStart();
 
-        running = true;
-
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Message msg = mHandler.obtainMessage();
-                mHandler.sendMessage(msg);
+                try {
+                    while(isRunning) {
+                        Thread.sleep(1000);
+                        Message msg = mHandler.obtainMessage();
+                        mHandler.sendMessage(msg);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.e("chatmessaging", "Exception in processing message.", ex);
+                }
             }
         });
+        isRunning = true;
+        thread.start();
     }
 
+    public void onStop()
+    {
+        super.onStop();
+
+        isRunning = false;
+    }
+    /*
     public void onResume()
     {
         super.onResume();
@@ -78,8 +98,10 @@ public class Chatting extends AppCompatActivity {
         Thread thread = new BackgroundThread();
         thread.start();
     }
+    */
 
 
+    //click back button
     public void onButtonBackClicked(View v)
     {
         Intent intent =new Intent();
@@ -89,6 +111,7 @@ public class Chatting extends AppCompatActivity {
         finish();
     }
 
+    /*
     class BackgroundThread extends Thread{
         public void run()
         {
@@ -106,12 +129,19 @@ public class Chatting extends AppCompatActivity {
             }
         }
     }
+    */
 
-    public class ProgressHandler extends Handler{
+
+    public class ProgressHandler extends Handler {
 
         public void handleMessage(Message msg)
         {
+            EDITTEXT = (EditText) findViewById(R.id.editText);
 
+            GregorianCalendar gcalendar = new GregorianCalendar();
+            textView1 = (TextView) findViewById(R.id.chat2);
+            textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
         }
     }
+
 }
