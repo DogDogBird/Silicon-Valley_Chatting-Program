@@ -1,0 +1,33 @@
+package org.androidtown.socket;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Collections;
+import java.util.HashMap;
+
+public class SocketServer 
+{
+	try
+	{
+		int portNumber = 5001;
+		
+		System.out.println("Starting Java Socket Server ...");
+		ServerSocket aServerSocket = new ServerSocket(portNumber); //객체 생성
+		System.out.println("Listening at port " + portNumber + " ...");
+		
+		while(true)//클라이언트 연결 대기
+		{
+			Socket sock = aServerSocket.accept();//소켓 객체 참조
+			InetAddress clientHost = sock.getLocalAddress();
+			int clientPort = sock.getPort();
+			System.out.println("A client connected. host : " + clientHost + ", port : " + clientPort);
+			
+			DataInputStream inStream = new DataInputStream(sock.getInputStream());
+			byte inputData = inStream.readByte();
+			System.out.println("Input : " + inputData);
+		}
+	}
+}

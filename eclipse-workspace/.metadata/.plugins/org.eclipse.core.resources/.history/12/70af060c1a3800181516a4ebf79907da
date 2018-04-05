@@ -1,0 +1,17 @@
+package org.androidtown.socket;
+
+import java.net.ServerSocket;
+
+public class SocketServer 
+{
+	public static void main(String[] args)
+	{
+		try
+		{
+			int portNumber = 5001;
+			
+			System.out.println("Starting Java Socket Server ...");
+			ServerSocket aServerSocket = new ServerSocket(portNumber);
+		}
+	}
+}
