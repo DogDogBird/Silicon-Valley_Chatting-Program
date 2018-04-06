@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -42,6 +46,18 @@ public class Chatting extends AppCompatActivity {
 
         EDITTEXT = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.chat1);
+
+        String addr = "";
+        try {
+            addr = InetAddress.getLocalHost().toString();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        ConnectThread thread2 = new ConnectThread(addr);
+        thread2.start();
 
         mHandler = new ProgressHandler();
 
@@ -141,6 +157,40 @@ public class Chatting extends AppCompatActivity {
             GregorianCalendar gcalendar = new GregorianCalendar();
             textView1 = (TextView) findViewById(R.id.chat2);
             textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
+        }
+    }
+
+    class ConnectThread extends Thread{
+        String hostname;
+
+        public ConnectThread(String addr)
+        {
+            hostname = addr;
+        }
+        public void run()
+        {
+            try
+            {
+                int port = 11001;
+                Socket sock = new Socket(hostname,port);
+
+                ObjectOutputStream outStream = new ObjectOutputStream(sock.getOutputStream());
+
+                outStream.writeObject("Hello AndroidTown on Android");
+                outStream.flush();
+
+                ObjectInputStream inStream = new ObjectInputStream(sock.getInputStream());
+                String obj = (String) inStream.readObject();
+
+                Log.d("MainActivity", "message from Server : " + obj);
+
+                sock.close();
+
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
         }
     }
 
