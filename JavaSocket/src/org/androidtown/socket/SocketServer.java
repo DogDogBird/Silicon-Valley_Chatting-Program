@@ -16,12 +16,18 @@ public class SocketServer
 		DataInputStream inStream = null;
 		DataOutputStream outStream = null;
 		
+		FileIO user = new FileIO();
+		//user.UserFileWrite(ID, PW, Name);
+		user.ThreadStart();
+		
+		
 		try
 		{
 			int portNumber = 5001;
 			aServerSocket = new ServerSocket(portNumber);
 			System.out.println("Starting Java Socket Server ...");
 			System.out.println("Listening at port " + portNumber + " ...");
+			
 		
 			while(true)//클라이언트 연결 대기
 			{
@@ -34,6 +40,7 @@ public class SocketServer
 				outStream = new DataOutputStream(socket.getOutputStream());
 
 				outStream.writeUTF("이거 받으면 연결된거!");
+				
 				outStream.flush();
 				
 				while(true)
