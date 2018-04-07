@@ -1,5 +1,10 @@
 package org.androidtown.socket;
 
+enum STATUS
+{
+    OFFLINE, ONLINE, BUSY
+}
+
 public class User {
 	
 	User()
@@ -12,6 +17,7 @@ public class User {
 	private String ID;
 	private String PW;
 	private String Name;
+	private STATUS status;
 	
 	public String get_ID()
 	{
@@ -25,6 +31,11 @@ public class User {
 	{
 		return Name;
 	}
+	public STATUS get_status()
+	{
+		return status;
+	}
+	
 	public void set_ID(String _ID)
 	{
 		ID = _ID;
@@ -36,5 +47,9 @@ public class User {
 	public void set_Name(String _Name)
 	{
 		Name = _Name;
+	}
+	public void set_Status(STATUS stat)
+	{
+		status = stat;
 	}
 }
