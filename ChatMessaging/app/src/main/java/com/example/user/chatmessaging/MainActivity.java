@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         editTextID = (EditText) findViewById(R.id.editText1);
         editTextPW = (EditText) findViewById(R.id.editText2);
-        if(editTextID.getText().toString() == "kyubin" && editTextPW.getText().toString() == "1234")
+        if(editTextID.getText().toString().equals("kyubin") && editTextPW.getText().toString().equals("1234"))
         {
             Toast.makeText(this,"Login successfully",Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), FriendMenu.class);
