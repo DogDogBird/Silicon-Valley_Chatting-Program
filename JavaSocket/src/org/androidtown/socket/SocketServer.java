@@ -1,5 +1,7 @@
 package org.androidtown.socket;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.net.Socket;
 
 public class SocketServer 
 {
+	
 	public static void main(final String[] args)
 	{
 		ServerSocket aServerSocket = null; //객체 생성
@@ -18,8 +21,9 @@ public class SocketServer
 		
 		FileIO user = new FileIO();
 		//user.UserFileWrite(ID, PW, Name);
-		user.ThreadStart();
-		
+		FileIO.ThreadStart();
+		List<User> userList = user.getUserList();
+		//printAllUsers();
 		
 		try
 		{
@@ -32,6 +36,7 @@ public class SocketServer
 			while(true)//클라이언트 연결 대기
 			{
 				socket = aServerSocket.accept();//소켓 객체 참조
+				socket.isInputShutdown();
 				InetAddress clientHost = socket.getLocalAddress();
 				int clientPort = socket.getPort();
 				System.out.println("A client connected. : " + socket.getInetAddress().toString() + ", port : " + clientPort);
@@ -47,8 +52,25 @@ public class SocketServer
 				{
 					try
 					{
+						
+						String ID = "";
+						String PW = "";
 						String data = inStream.readUTF();
-						System.out.printf("Server Received %s\n", data );
+						if(data.contains("ID_"))
+						{
+							ID = data.replace("ID_", "");
+							System.out.println("ID: " + ID);
+						}
+						else if(data.contains("PW_"))
+						{
+							PW = data.replace("PW_", "");
+							System.out.println("PW: " + PW);
+						}
+						else if(CheckUser(ID,PW,userList))
+						{
+							outStream.writeUTF("LoginSuccessFull@!@!");
+							System.out.printf("Server Received %s\n", data );
+						}
 					}
 					catch(Exception ex)
 					{
@@ -57,12 +79,26 @@ public class SocketServer
 					}
 				}
 				
-				aServerSocket.close();
 			}																																																					
 		}
 		catch(Exception ex)
 		{
+			System.out.println("Error in main exception");
 			ex.printStackTrace();
 		}
 	}
+	public static Boolean CheckUser(String ID, String PW, List<User> userList)
+	{
+		for(int i=0;i<userList.size();i++)
+		{
+			if(userList.get(i).equals(ID)&&userList.get(i).equals(PW))
+			{
+				System.out.println("Checked");
+				return true;
+			}
+		}
+		System.out.println("nothing exists");
+		return false;
+	}
+
 }
