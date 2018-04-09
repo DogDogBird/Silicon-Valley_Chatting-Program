@@ -1,28 +1,34 @@
-package org.androidtown.socket;
+
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.FileWriter;	
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FileIO {
-	public static void main(String[] args) throws IOException
+public class FileIO extends SocketServer{
+
+	
+	public static void main(String[] args) 
 	{
-		
+		ThreadStart();
 	}
 	
 	public static void ThreadStart()
 	{
 		Thread t1 = new Thread(new ReadingUserThread(),"A");
 		t1.start();
+		
+		
 	}
 	//For sign Up
-	public static void UserFileWrite(String ID,String PW, String Name) throws IOException
+	public static void UserFileWrite(String ID,String PW, String Name, String Status) throws IOException
 	{
 		PrintWriter pw = new PrintWriter(new FileWriter("User.txt",true));
 		
@@ -31,15 +37,62 @@ public class FileIO {
 		pw.print(PW);
 		pw.print(" ");
 		pw.print(Name);
+		pw.print(" ");
+		pw.print("OFFLINE");
 		pw.print("\n");
 		
 		pw.close();
+	}
+	public static void OFFLINEToONLINE(String ID) throws IOException
+	{
+		String oldFileName = "User.txt";
+		String tmpFileName = "tmp_User.txt";
+		
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		
+		try
+		{
+			br = new BufferedReader(new FileReader(oldFileName));
+			bw = new BufferedWriter(new FileWriter(tmpFileName));
+			String line;
+			while((line = br.readLine()) != null)
+			{
+				if(line.contains(ID))
+				{
+					line = line.replace("OFFLINE", "ONLINE");
+				}
+				bw.write(line + "\n");
+			}
+		}
+		catch (Exception e)
+		{
+			return;
+		}
+		finally
+		{
+			try
+			{
+				if(br!=null)
+				{
+					br.close();
+				}
+			}
+			catch(IOException e)
+			{
+			}
+		}
+		File oldFile = new File(oldFileName);
+		oldFile.delete();
+		
+		File newFile = new File(tmpFileName);
+		newFile.renameTo(oldFile);
 	}
 	
 	//For saving chatting
 	public static void ChattingFileWrite(String Text, String SenderID, String ReceiverID) throws IOException
 	{
-		PrintWriter pw = new PrintWriter(new FileWriter("User.txt",true));
+		PrintWriter pw = new PrintWriter(new FileWriter("Chatting.txt",true));
 		
 		pw.print(Text);
 		pw.print(" ");
@@ -52,7 +105,7 @@ public class FileIO {
 	}
 	
 	//Read User -> Thread
-	public static void UserFileRead() throws IOException
+	public static synchronized void UserFileRead() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader("User.txt"));
 		while(true)
@@ -73,7 +126,7 @@ public class FileIO {
 	}
 	
 	//Read User -> Thread
-		public static void UserChattingRead() throws IOException
+		public static synchronized void UserChattingRead() throws IOException
 		{
 			BufferedReader br = new BufferedReader(new FileReader("Chatting.txt"));
 			while(true)
@@ -87,18 +140,17 @@ public class FileIO {
 				String Text = columns[0];
 				String SenderID = columns[1];
 				String ReceiverID = columns[2];
-				System.out.println("Text: " + Text);
-				System.out.println("SenderID: " + SenderID);
-				System.out.println("ReceiverID" + ReceiverID + "\n");
+				//System.out.println("Text: " + Text);
+				//System.out.println("SenderID: " + SenderID);
+				//System.out.println("ReceiverID" + ReceiverID + "\n");
 			}
 		}
-	//Read Chatting
+	
 }
 
-class ReadingUserThread implements Runnable
+class ReadingUserThread extends FileIO implements Runnable 
 {
 	private static BufferedReader br = null;
-	private List<User> list;
 	private User tempUser;
 	
 	static 
@@ -119,23 +171,25 @@ class ReadingUserThread implements Runnable
 		int count = 0;
 		while(true)
 		{
-			tempUser = new User();
 			//System.out.println(Thread.currentThread.getName());
-			this.list = new ArrayList<User>();
 			synchronized(br)
 			{
 				try
 				{
+					List<User> list = new ArrayList<User>();
 					while((line = br.readLine()) != null)
 					{
+						tempUser = new User();
 						String[] columns = line.split(" ");
 						String ID = columns[0];
 						String PW = columns[1];
 						String Name = columns[2];
+						String Status = columns[3];
 						tempUser.set_ID(ID);
 						tempUser.set_PW(PW);
 						tempUser.set_Name(Name);
-						if(count < 15)
+						tempUser.set_Status(Status);
+						if(count < 30)
 						{
 							list.add(tempUser);
 							count++;
@@ -147,6 +201,9 @@ class ReadingUserThread implements Runnable
 							break;
 						}
 					}
+					display(list);
+					SocketServer socketServer = new SocketServer();
+					socketServer.setUserList(list);
 				}
 				catch(IOException e)
 				{
@@ -156,7 +213,6 @@ class ReadingUserThread implements Runnable
 			try
 			{
 				Thread.sleep(1);
-				display(this.list);
 			}
 			catch(InterruptedException e)
 			{
@@ -169,6 +225,21 @@ class ReadingUserThread implements Runnable
 			}
 		}
 	}
+	/*
+	public Boolean CheckUser(String ID, String PW)
+	{
+		for(int i=0;i<list.size();i++)
+		{
+			if(list.get(i).equals(ID)&&list.get(i).equals(PW))
+			{
+				System.out.println("Checked");
+				return true;
+			}
+		}
+		System.out.println("nothing exists");
+		return false;
+	}
+	*/
 	
 	public void display(List<User> list)
 	{
@@ -205,3 +276,7 @@ class MyThread implements Runnable {
 		queue.add(contents);
 	}
 }
+
+//login
+
+//

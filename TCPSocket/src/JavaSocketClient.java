@@ -1,3 +1,5 @@
+
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -5,30 +7,30 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class TcpIpMultichatClient 
+public class JavaSocketClient 
 {
 	
-	static Boolean isLogin = false;
+	static public Boolean isLogin = false;
 	String CheckLogin = "";
 
-	public TcpIpMultichatClient() {
+	static String ID = "";
+	static String PW = "";
+	static String Name = "";
+	static STATUS Status = STATUS.OFFLINE;
+
+	public JavaSocketClient() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String args[])
 	{
-		if(args.length!=1)
-		{
-			System.out.print("USAGE: java TcpIpMultichatClient 대화명");
-			System.exit(0);
-		}
 		try
 		{
 			String serverIp = "127.0.0.1";
-			Socket socket = new Socket(serverIp,5001);
+			Socket socket = new Socket(serverIp,7777);
 			System.out.println("서버에 연결되었습니다");
 			Thread receiver = new Thread(new ClientReceiver(socket));
-			Thread sender = new Thread(new ClientSender(socket,args[0]));
+			Thread sender = new Thread(new ClientSender(socket));
 			receiver.start();
 			sender.start();
 			
@@ -47,13 +49,12 @@ public class TcpIpMultichatClient
 		//서버에서 처리 후 true, false 반환
 		//false라면 더이상 접근 불가
 		//true라면 해당 아이디로 채팅방 입장
-		ClientSender(Socket socket, String name)
+		ClientSender(Socket socket)
 		{
 			this.socket = socket;
 			try
 			{
 				out = new DataOutputStream(socket.getOutputStream());
-				this.name = name;
 			}catch(Exception e){}
 		}
 	
@@ -64,19 +65,26 @@ public class TcpIpMultichatClient
 		
 		Scanner scanner = new Scanner(System.in);
 		
-		Login(out);
+		while(!isLogin)
+		{
+			Login(out);
+		}
 		
 		
 		try
 		{
 			if(out != null)
 			{
-				out.writeUTF(name);
+				//out.writeUTF(name);
 				
 			}
 			while(out!=null)
 			{
-				out.writeUTF("["+name+"]"+scanner.nextLine());
+				if(isLogin)
+				{
+					System.out.println("Write text");
+					out.writeUTF("[" + Name + "]" + scanner.nextLine());
+				}
 			}
 			
 		}catch(IOException e){}
@@ -104,20 +112,55 @@ public class TcpIpMultichatClient
 			{
 				try
 				{
-					System.out.println(in.readUTF());
+					String data = in.readUTF();
+					//System.out.println(in.readUTF());
 					
+					if(data.contains("이거"))
+					{
+						System.out.println("이거 받으면 연결됨~~!!");
+					}
 					//Check if login
-					if(in.readUTF().contains("LoginSuccessFull@!@!"))
+					//if logined
+					
+					String[] splited = data.split(":");
+					
+					
+					
+					if(splited[0].contains("LoginSuccessFull@!@!"))
 					{
+						ID = splited[1].replace("LoginedUserID_", "");
+						//System.out.println("LoginedUserID_: " + ID);
+						PW = splited[2].replace("LoginedUserPW_", "");
+						//System.out.println("LoginedUserPW_: " + PW);
+						Name = splited[3].replace("LoginedUserName_", "");
+						//System.out.println("LoginedUserName_: " + PW);
+						
 						isLogin = true;
+						
 						System.out.println("Login Successfully");
-					}
-					else
-					{
-						System.out.println("Login failed");
+						if(splited[1].contains("LoginedUserID_"))
+						{
+							ID = splited[1].replace("LoginedUserID_", "");
+							System.out.println("LoginedUserID_: " + ID);
+						}
+						else if(splited[2].contains("LoginedUserPW_"))
+						{
+							PW = splited[2].replace("LoginedUserPW_", "");
+							System.out.println("LoginedUserPW_: " + PW);
+						}
+						else if(splited[3].contains("LoginedUserName_"))
+						{
+							Name = splited[3].replace("LoginedUserName_", "");
+							System.out.println("LoginedUserName_: " + Name);
+						}
 					}
 					
-						
+					//if not logined			
+					else if(data.contains("@#Check the ID or Password Please@#"))
+					{
+						System.out.println("Check the ID or Password Please");
+					}
+				
 				}catch(IOException e){}
 			}
 		}
@@ -127,10 +170,13 @@ public class TcpIpMultichatClient
 		
 		try {
 			Scanner scan = new Scanner(System.in);
+			String ID;
+			String PW;
 			System.out.println("ID: ");
-			out.writeUTF("ID_" + scan.nextLine());
+			ID =  scan.nextLine();
 			System.out.println("PW: ");
-			out.writeUTF("PW_" + scan.nextLine());
+			PW = scan.nextLine();
+			out.writeUTF("ID_" + ID + ":PW_" + PW);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
