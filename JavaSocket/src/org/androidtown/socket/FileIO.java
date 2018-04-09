@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FileIO {
-	protected List<User> list;
-	
 	public static void main(String[] args) throws IOException
 	{
 		
@@ -22,8 +20,6 @@ public class FileIO {
 	{
 		Thread t1 = new Thread(new ReadingUserThread(),"A");
 		t1.start();
-		
-		
 	}
 	//For sign Up
 	public static void UserFileWrite(String ID,String PW, String Name) throws IOException
@@ -91,21 +87,18 @@ public class FileIO {
 				String Text = columns[0];
 				String SenderID = columns[1];
 				String ReceiverID = columns[2];
-				//System.out.println("Text: " + Text);
-				//System.out.println("SenderID: " + SenderID);
-				//System.out.println("ReceiverID" + ReceiverID + "\n");
+				System.out.println("Text: " + Text);
+				System.out.println("SenderID: " + SenderID);
+				System.out.println("ReceiverID" + ReceiverID + "\n");
 			}
 		}
 	//Read Chatting
-		public List<User> getUserList()
-		{
-			return list;
-		}
 }
 
-class ReadingUserThread extends FileIO implements Runnable 
+class ReadingUserThread implements Runnable
 {
 	private static BufferedReader br = null;
+	private List<User> list;
 	private User tempUser;
 	
 	static 
@@ -142,7 +135,7 @@ class ReadingUserThread extends FileIO implements Runnable
 						tempUser.set_ID(ID);
 						tempUser.set_PW(PW);
 						tempUser.set_Name(Name);
-						if(count < 30)
+						if(count < 15)
 						{
 							list.add(tempUser);
 							count++;
@@ -175,19 +168,6 @@ class ReadingUserThread extends FileIO implements Runnable
 				break;
 			}
 		}
-	}
-	public Boolean CheckUser(String ID, String PW)
-	{
-		for(int i=0;i<list.size();i++)
-		{
-			if(list.get(i).equals(ID)&&list.get(i).equals(PW))
-			{
-				System.out.println("Checked");
-				return true;
-			}
-		}
-		System.out.println("nothing exists");
-		return false;
 	}
 	
 	public void display(List<User> list)
@@ -225,7 +205,3 @@ class MyThread implements Runnable {
 		queue.add(contents);
 	}
 }
-
-//login
-
-//
