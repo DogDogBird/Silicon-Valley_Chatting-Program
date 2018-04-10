@@ -5,7 +5,7 @@ import java.util.Stack;
 
 enum Type
 {
-    OFFLINe, ONLINE, BUSY
+    OFFLINE, ONLINE, BUSY
 }
 
 public class User {

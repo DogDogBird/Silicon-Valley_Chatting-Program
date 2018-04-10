@@ -36,8 +36,8 @@ public class Chatting extends AppCompatActivity {
     private BufferedReader networkReader;
     private BufferedWriter networkWriter;
 
-    // private String ip = "61.255.4.166";//IP
-    public static final int SERVERPORT = 2222;
+    private String ip = "127.0.0.1";//IP
+    public static final int SERVERPORT = 7777;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

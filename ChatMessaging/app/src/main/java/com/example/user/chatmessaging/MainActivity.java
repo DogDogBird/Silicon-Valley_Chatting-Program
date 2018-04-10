@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.net.ConnectException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +19,26 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextID;
     EditText editTextPW;
 
+    private String ip = "127.0.0.1";//IP
+    public static int SERVERPORT = 7777;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userList = new ArrayList<>();
+        try
+        {
+            Socket socket = new Socket(ip, SERVERPORT);
+            System.out.println("서버에 연결되었습니다");
+        }
+        catch (ConnectException ce)
+        {
+            System.out.println("서버에 연결되지 않았습니다");
+            ce.printStackTrace();}
+        catch(Exception e){System.out.println("서버에 연결되지 않았습니다2");}
 
+        userList = new ArrayList<>();
     }
 
     @Override
@@ -56,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     public void onButton2Clicked(View v)
     {
             Intent intent = new Intent(getApplicationContext(), Signup.class);
-            startActivityForResult(intent, REQUEST_CODE_MENU);
+
+            startActivity(intent);
     }
 }
