@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FileIO extends SocketServer{
+public class FileIO  {
 
 	
 	public static void main(String[] args) 
@@ -43,6 +43,8 @@ public class FileIO extends SocketServer{
 		
 		pw.close();
 	}
+	
+	/*
 	public static void OFFLINEToONLINE(String ID) throws IOException
 	{
 		String oldFileName = "User.txt";
@@ -88,6 +90,7 @@ public class FileIO extends SocketServer{
 		File newFile = new File(tmpFileName);
 		newFile.renameTo(oldFile);
 	}
+	*/
 	
 	//For saving chatting
 	public static void ChattingFileWrite(String Text, String SenderID, String ReceiverID) throws IOException
@@ -105,23 +108,53 @@ public class FileIO extends SocketServer{
 	}
 	
 	//Read User -> Thread
-	public static synchronized void UserFileRead() throws IOException
+	public void UserFileRead() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader("User.txt"));
-		while(true)
+		User tempUser;
+		String line = "";
+		int count = 0;
+		
+		try
 		{
-			String line = br.readLine();
-			if(line ==null)
+			List<User> list = new ArrayList<User>();
+			System.out.println("File Reading start");
+			while((line = br.readLine()) != null)
 			{
-				break;
+				tempUser = new User();
+				String[] columns = line.split(" ");
+				String ID = columns[0];
+				String PW = columns[1];
+				String Name = columns[2];
+				tempUser.set_ID(ID);
+				tempUser.set_PW(PW);
+				tempUser.set_Name(Name);
+				if(count < 30)
+				{
+					list.add(tempUser);
+					count++;
+				}
+				else
+				{
+					list.add(tempUser);
+					count = 0;
+					break;
+				}
 			}
-			String[] columns = line.split(" ");
-			String ID = columns[0];
-			String PW = columns[1];
-			String Name = columns[2];
-			System.out.println("ID: " + ID);
-			System.out.println("PW: " + PW);
-			System.out.println("Name: " + Name + "\n");
+			System.out.println("File Reading End");
+			
+			System.out.println("setUserList(list) start");
+			ClientHandler ch = new ClientHandler();
+			ch.setUserList(list);
+			for(int i=0;i<list.size();i++)
+			{
+				System.out.println(list.get(i).get_ID());
+			}
+			System.out.println("setUserList(list) End");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	
@@ -177,6 +210,7 @@ class ReadingUserThread extends FileIO implements Runnable
 				try
 				{
 					List<User> list = new ArrayList<User>();
+					System.out.println("File Reading start");
 					while((line = br.readLine()) != null)
 					{
 						tempUser = new User();
@@ -184,11 +218,9 @@ class ReadingUserThread extends FileIO implements Runnable
 						String ID = columns[0];
 						String PW = columns[1];
 						String Name = columns[2];
-						String Status = columns[3];
 						tempUser.set_ID(ID);
 						tempUser.set_PW(PW);
 						tempUser.set_Name(Name);
-						tempUser.set_Status(Status);
 						if(count < 30)
 						{
 							list.add(tempUser);
@@ -202,8 +234,12 @@ class ReadingUserThread extends FileIO implements Runnable
 						}
 					}
 					display(list);
-					SocketServer socketServer = new SocketServer();
-					socketServer.setUserList(list);
+					System.out.println("File Reading End");
+					
+					System.out.println("setUserList(list) start");
+					ClientHandler ch = new ClientHandler();
+					ch.setUserList(list);
+					System.out.println("setUserList(list) End");
 				}
 				catch(IOException e)
 				{

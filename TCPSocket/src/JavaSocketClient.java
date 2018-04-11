@@ -9,16 +9,18 @@ import java.util.Scanner;
 
 public class JavaSocketClient 
 {
-	
-	static public Boolean isLogin = false;
-	String CheckLogin = "";
-
 	static String ID = "";
 	static String PW = "";
 	static String Name = "";
 	static STATUS Status = STATUS.OFFLINE;
+	static User loginedUser;
+	static boolean isLogin = false;
 
-	public JavaSocketClient() {
+	static DataOutputStream out;
+	static DataInputStream in;
+	
+	public JavaSocketClient() 
+	{
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -31,8 +33,8 @@ public class JavaSocketClient
 			System.out.println("서버에 연결되었습니다");
 			Thread receiver = new Thread(new ClientReceiver(socket));
 			Thread sender = new Thread(new ClientSender(socket));
-			receiver.start();
 			sender.start();
+			receiver.start();			
 			
 		}catch(ConnectException ce) {ce.printStackTrace();}
 		catch(Exception e){}
@@ -41,7 +43,6 @@ public class JavaSocketClient
 	static class ClientSender extends Thread
 	{
 		Socket socket;
-		DataOutputStream out;
 		String name;
 		
 		//처음에 아이디랑 비밀번호를 입력
@@ -60,42 +61,42 @@ public class JavaSocketClient
 	
 	
 		public void run()
-		{
-
-		
-		Scanner scanner = new Scanner(System.in);
-		
-		while(!isLogin)
-		{
-			Login(out);
-		}
-		
-		
-		try
-		{
-			if(out != null)
+		{		
+			Scanner scanner = new Scanner(System.in);		
+			while(!isLogin)
 			{
-				//out.writeUTF(name);
-				
-			}
-			while(out!=null)
-			{
-				if(isLogin)
-				{
-					System.out.println("Write text");
-					out.writeUTF("[" + Name + "]" + scanner.nextLine());
+				try {
+					Login();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			}
-			
-		}catch(IOException e){}
-		}
+			}	
 		
+			try
+			{
+				if(out != null)
+				{
+					//out.writeUTF(name);				
+				}
+				while(out!=null)
+				{
+					if(isLogin)
+					{
+						System.out.println("Write text");
+						out.writeUTF("[" + Name + "]" + scanner.nextLine());
+					}
+				}			
+			}
+			catch(IOException e)
+			{				
+			}
+		}		
 	}
 	
 	static class ClientReceiver extends Thread
 	{
 		Socket socket;
-		DataInputStream in;
 		ClientReceiver(Socket socket)
 		{
 			this.socket = socket;
@@ -115,59 +116,22 @@ public class JavaSocketClient
 					String data = in.readUTF();
 					//System.out.println(in.readUTF());
 					
-					if(data.contains("이거"))
+					if(data.contains("LoginSuccessFull@!@!"))
 					{
-						System.out.println("이거 받으면 연결됨~~!!");
+						System.out.println("이거 받으면 연결됨~~");
 					}
 					//Check if login
 					//if logined
-					
-					String[] splited = data.split(":");
-					
-					
-					
-					if(splited[0].contains("LoginSuccessFull@!@!"))
-					{
-						ID = splited[1].replace("LoginedUserID_", "");
-						//System.out.println("LoginedUserID_: " + ID);
-						PW = splited[2].replace("LoginedUserPW_", "");
-						//System.out.println("LoginedUserPW_: " + PW);
-						Name = splited[3].replace("LoginedUserName_", "");
-						//System.out.println("LoginedUserName_: " + PW);
-						
-						isLogin = true;
-						
-						System.out.println("Login Successfully");
-						if(splited[1].contains("LoginedUserID_"))
-						{
-							ID = splited[1].replace("LoginedUserID_", "");
-							System.out.println("LoginedUserID_: " + ID);
-						}
-						else if(splited[2].contains("LoginedUserPW_"))
-						{
-							PW = splited[2].replace("LoginedUserPW_", "");
-							System.out.println("LoginedUserPW_: " + PW);
-						}
-						else if(splited[3].contains("LoginedUserName_"))
-						{
-							Name = splited[3].replace("LoginedUserName_", "");
-							System.out.println("LoginedUserName_: " + Name);
-						}
-					}
-					
-					//if not logined			
-					else if(data.contains("@#Check the ID or Password Please@#"))
-					{
-						System.out.println("Check the ID or Password Please");
-					}
+									
+					getLoginedInfoFromServer(data);
 				
 				}catch(IOException e){}
 			}
 		}
 	}
-	public static void Login (DataOutputStream out)
+	
+	public static void Login () throws InterruptedException
 	{
-		
 		try {
 			Scanner scan = new Scanner(System.in);
 			String ID;
@@ -178,11 +142,59 @@ public class JavaSocketClient
 			PW = scan.nextLine();
 			out.writeUTF("ID_" + ID + ":PW_" + PW);
 			
-		} catch (IOException e) {
+		} catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			System.out.println("program failed in Login");
 			e.printStackTrace();
+		}		
+	}
+	
+	public static void getLoginedInfoFromServer(String data)
+	{
+		String[] splited = data.split(":");
+				
+		if(splited[0].contains("LoginSuccessFull@!@!"))
+		{
+			ID = splited[1].replace("LoginedUserID_", "");
+			//System.out.println("LoginedUserID_: " + ID);
+			PW = splited[2].replace("LoginedUserPW_", "");
+			//System.out.println("LoginedUserPW_: " + PW);
+			Name = splited[3].replace("LoginedUserName_", "");
+			//System.out.println("LoginedUserName_: " + PW);
+					
+			System.out.println("Login Successfully");
+			if(splited[1].contains("LoginedUserID_"))
+			{
+				ID = splited[1].replace("LoginedUserID_", "");
+				System.out.println("LoginedUserID_: " + ID);
+			}
+			else if(splited[2].contains("LoginedUserPW_"))
+			{
+				PW = splited[2].replace("LoginedUserPW_", "");
+				System.out.println("LoginedUserPW_: " + PW);
+			}
+			else if(splited[3].contains("LoginedUserName_"))
+			{
+				Name = splited[3].replace("LoginedUserName_", "");
+				System.out.println("LoginedUserName_: " + Name);
+			}
+			
+			loginedUser.set_ID(ID);
+			loginedUser.set_PW(PW);
+			loginedUser.set_Name(Name);	
+			loginedUser.set_Status(STATUS.ONLINE);	
+			isLogin = true;
 		}
 		
+		//if not logined			
+		else if(data.contains("@#Check the ID or Password Please@#"))
+		{
+			System.out.println("Check the ID or Password Please");
+		}
+	}
+	public static User getLoginedUser()
+	{
+		return loginedUser;
 	}
 }
