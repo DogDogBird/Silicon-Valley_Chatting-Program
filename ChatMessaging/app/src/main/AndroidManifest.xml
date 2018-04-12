@@ -3,9 +3,7 @@
     package="com.example.user.chatmessaging">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -18,18 +16,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:label="Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FriendMenu" />
+        <activity
+            android:name=".FriendMenu"
+            android:label="Friend Menu"/>
         <activity
             android:name=".Chatting"
             android:label="Kyubin" />
-        <activity android:name=".Signup"></activity>
+        <activity
+            android:name=".Signup"
+            android:label="Sign Up"></activity>
+
+        <service android:name="ServerService"></service>
     </application>
 
 </manifest>

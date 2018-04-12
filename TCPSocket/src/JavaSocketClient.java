@@ -28,6 +28,7 @@ public class JavaSocketClient
 	{
 		try
 		{
+			loginedUser = new User();
 			String serverIp = "127.0.0.1";
 			Socket socket = new Socket(serverIp,7777);
 			System.out.println("서버에 연결되었습니다");
@@ -63,10 +64,12 @@ public class JavaSocketClient
 		public void run()
 		{		
 			Scanner scanner = new Scanner(System.in);		
-			while(!isLogin)
+			if(!isLogin)
 			{
 				try {
+					Thread.sleep(100);
 					Login();
+					isLogin = true;
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -141,6 +144,7 @@ public class JavaSocketClient
 			System.out.println("PW: ");
 			PW = scan.nextLine();
 			out.writeUTF("ID_" + ID + ":PW_" + PW);
+			out.flush();
 			
 		} catch (IOException e) 
 		{
@@ -150,7 +154,7 @@ public class JavaSocketClient
 		}		
 	}
 	
-	public static void getLoginedInfoFromServer(String data)
+	public static void getLoginedInfoFromServer(String data) throws IOException
 	{
 		String[] splited = data.split(":");
 				
@@ -169,12 +173,14 @@ public class JavaSocketClient
 				ID = splited[1].replace("LoginedUserID_", "");
 				System.out.println("LoginedUserID_: " + ID);
 			}
-			else if(splited[2].contains("LoginedUserPW_"))
+			
+			if(splited[2].contains("LoginedUserPW_"))
 			{
 				PW = splited[2].replace("LoginedUserPW_", "");
 				System.out.println("LoginedUserPW_: " + PW);
 			}
-			else if(splited[3].contains("LoginedUserName_"))
+			
+			if(splited[3].contains("LoginedUserName_"))
 			{
 				Name = splited[3].replace("LoginedUserName_", "");
 				System.out.println("LoginedUserName_: " + Name);
@@ -185,12 +191,14 @@ public class JavaSocketClient
 			loginedUser.set_Name(Name);	
 			loginedUser.set_Status(STATUS.ONLINE);	
 			isLogin = true;
+			
 		}
 		
 		//if not logined			
 		else if(data.contains("@#Check the ID or Password Please@#"))
 		{
 			System.out.println("Check the ID or Password Please");
+			isLogin = false;
 		}
 	}
 	public static User getLoginedUser()

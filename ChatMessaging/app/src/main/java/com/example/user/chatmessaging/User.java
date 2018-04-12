@@ -1,67 +1,55 @@
 package com.example.user.chatmessaging;
 
-import java.util.List;
-import java.util.Stack;
-
-enum Type
+enum STATUS
 {
     OFFLINE, ONLINE, BUSY
 }
 
 public class User {
-    private String userID;
-    private String userPassword;
-    private String userName;
-    private Stack <String> messageList;
-    private List<User> friendList;
-    private Type type;
 
-    public String get_userID()
+    User()
     {
-        return userID;
+        ID ="";
+        PW = "";
+        Name = "";
     }
-    public String get_userPassword()
+
+    private String ID;
+    private String PW;
+    private String Name;
+    private STATUS status;
+
+    public String get_ID()
     {
-        return userPassword;
+        return ID;
     }
-    public String get_userName()
+    public String get_PW()
     {
-        return userName;
+        return PW;
     }
-    public Stack<String> get_messageList()
+    public String get_Name()
     {
-        return messageList;
+        return Name;
     }
-    public List<User> get_friendList()
+    public STATUS get_status()
     {
-        return friendList;
+        return status;
     }
-    public Type get_type()
+
+    public void set_ID(String _ID)
     {
-        return type;
+        ID = _ID;
     }
-    public void setUserID(String userID)
+    public void set_PW(String _PW)
     {
-        this.userID = userID;
+        PW = _PW;
     }
-    public void setUserPassword(String userPassword)
+    public void set_Name(String _Name)
     {
-        this.userID = userPassword;
+        Name = _Name;
     }
-    public void setUserName(String userName)
+    public void set_Status(STATUS stat)
     {
-        this.userName = userName;
-    }
-    public void setMessageList(Stack<String> messageList)
-    {
-        this.messageList = messageList;
-    }
-    public void setFriendList(List<User> friendList)
-    {
-        this.friendList = friendList;
-    }
-    public void setType(Type type)
-    {
-        this.type = type;
+        status = stat;
     }
 }

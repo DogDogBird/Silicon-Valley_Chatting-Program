@@ -2,13 +2,13 @@ package com.example.user.chatmessaging;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.net.ConnectException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,25 +19,22 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextID;
     EditText editTextPW;
 
-    private String ip = "127.0.0.1";//IP
+    private String ip = "61.255.4.166";//IP
     public static int SERVERPORT = 7777;
+
+    SimpleSocket ssocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try
+        Handler mHandler = new Handler(Looper.getMainLooper())
         {
-            Socket socket = new Socket(ip, SERVERPORT);
-            System.out.println("서버에 연결되었습니다");
-        }
-        catch (ConnectException ce)
-        {
-            System.out.println("서버에 연결되지 않았습니다");
-            ce.printStackTrace();}
-        catch(Exception e){System.out.println("서버에 연결되지 않았습니다2");}
+        };
 
+        ssocket = new SimpleSocket(ip,SERVERPORT,mHandler);
+        ssocket.start();
         userList = new ArrayList<>();
     }
 
@@ -57,11 +54,14 @@ public class MainActivity extends AppCompatActivity {
 
         editTextID = (EditText) findViewById(R.id.editText1);
         editTextPW = (EditText) findViewById(R.id.editText2);
+        //ssocket.sendStringtoServer("ID_" + editTextID + ":PW_" + editTextPW);
+
         if(editTextID.getText().toString().equals("kyubin") && editTextPW.getText().toString().equals("1234"))
         {
             Toast.makeText(this,"Login successfully",Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), FriendMenu.class);
             startActivityForResult(intent, REQUEST_CODE_MENU);
+            ssocket.setIsLogin(true);
         }
         else
         {
