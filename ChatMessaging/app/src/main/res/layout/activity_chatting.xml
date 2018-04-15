@@ -34,7 +34,8 @@
         android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Send"/>
+        android:text="Send"
+        android:onClick="onSendButtonClicked"/>
 
     <TextView
         android:id = "@+id/chat1"

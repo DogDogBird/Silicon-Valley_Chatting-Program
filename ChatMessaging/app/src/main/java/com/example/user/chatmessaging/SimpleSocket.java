@@ -1,3 +1,4 @@
+/*
 package com.example.user.chatmessaging;
 
 import java.io.BufferedReader;
@@ -11,20 +12,21 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Scanner;
 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.user.chatmessaging.User;
+
 public class SimpleSocket extends Thread {
-    private Socket  mSocket;
+    static Socket  mSocket;
 
-    static DataOutputStream out;
-    static DataInputStream in;
+    static private BufferedReader buffRecv;
+    static private BufferedWriter buffSend;
 
-    private String  mAddr = "61.255.4.166";
-    private int     mPort = 7777;
+    private String  mAddr ;
+    private int     mPort ;
     private boolean mConnected = false;
     private Handler mHandler = null;
 
@@ -34,11 +36,16 @@ public class SimpleSocket extends Thread {
     static STATUS Status = STATUS.OFFLINE;
     static User loginedUser ;
     static boolean isLogin = false;
+    static boolean isConnect = false;
 
     static String tempStr = "";
 
 
-    static class MessageTypeClass {
+    static DataOutputStream Dout;
+    static DataInputStream Din;
+
+    static class MessageTypeClass
+    {
         public static final int SIMSOCK_CONNECTED = 1;
         public static final int SIMSOCK_DATA = 2;
         public static final int SIMSOCK_DISCONNECTED = 3;
@@ -51,6 +58,7 @@ public class SimpleSocket extends Thread {
         mAddr = addr;
         mPort = port;
         mHandler = handler;
+        connect(mAddr,mPort);
     }
 
     private void makeMessage(MessageType what, Object obj)
@@ -69,30 +77,42 @@ public class SimpleSocket extends Thread {
             mSocket = new Socket();
             mSocket.connect(socketAddress, 5000);
             System.out.println("서버에 연결되었습니다");
-            //Thread receiver = new Thread(new ClientReceiver(mSocket));
-            //Thread sender = new Thread(new ClientSender(mSocket));
-            //sender.start();
-            //receiver.start();
+            Thread receiver = new Thread(new ClientReceiver(mSocket));
+            Thread sender = new Thread(new ClientSender(mSocket));
+            sender.start();
+            receiver.start();
+            System.out.println("Dout Din 생성@@@@@@@@@@@@@@@@@@");
         }
         catch (IOException e)
         {
             System.out.println(e);
             e.printStackTrace();
+            isConnect = false;
             return false;
         }
+        isConnect = true;
         return true;
     }
+
+
     public void run() {
-        if(!connect(mAddr, mPort))
+        if(!connect(mAddr,mPort)) {
+            System.out.println("연결 실패@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return; // connect failed
-        if(mSocket == null)
+        }
+        if(mSocket == null) {
+            System.out.println("소켓 미아ㅏㅏㅏㅏㅏㅏㅏㅏㅏ@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             return;
+        }
+
 
         try
         {
-            out = new DataOutputStream(mSocket.getOutputStream());
-            in = new DataInputStream(mSocket.getInputStream());
-            //buffSend = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+            buffRecv = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+            buffSend = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
+
+
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -108,18 +128,20 @@ public class SimpleSocket extends Thread {
         {
             try
             {
-                aLine = in.readUTF();
-                if(aLine != null)
+                if(isLogin)
+                {
+                    buffSend.write("Chatting: "); //chatting의 editText, 송신자, 수신자 받아오기
+                }
+
+                aLine = buffRecv.readLine();
+                    if(aLine != null)
                 {
                     makeMessage(MessageType.SIMSOCK_DATA, aLine);
                 }
                 else break;
 
                 //when logined
-                if(isLogin)
-                {
-                    out.writeUTF("Chatting: "); //chatting의 editText, 송신자, 수신자 받아오기
-                }
+
             }
             catch (IOException e)
             {
@@ -129,14 +151,14 @@ public class SimpleSocket extends Thread {
 
             try
             {
-                String data = in.readUTF();
+                String data = buffRecv.readLine();
 
                 if(data.contains("LoginSuccessFull@!@!"))
                 {
                     System.out.println("이거 받으면 연결됨~~");
                 }
 
-                getLoginedInfoFromServer(data);
+                //getLoginedInfoFromServer(data);
             }
             catch (IOException e)
             {
@@ -147,8 +169,9 @@ public class SimpleSocket extends Thread {
         Log.d("SimpleSocket", "socket_thread loop terminated");
 
         try {
-            in.close();
-            out.close();
+
+            buffRecv.close();
+            buffSend.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -159,117 +182,6 @@ public class SimpleSocket extends Thread {
     synchronized public boolean isConnected(){
         return mConnected;
     }
-
-    static class ClientSender extends Thread
-    {
-        Socket socket;
-        String name;
-
-        ClientSender(Socket socket)
-        {
-            this.socket = socket;
-            try
-            {
-                out = new DataOutputStream(socket.getOutputStream());
-            }
-            catch(Exception e){}
-        }
-
-
-        public void run()
-        {
-            Scanner scanner = new Scanner(System.in);
-            while(!isLogin)
-            {
-                try {
-                    Thread.sleep(100);
-                    //Login();
-                    isLogin = true;
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-            try
-            {
-                if(out != null)
-                {
-                    //out.writeUTF(name);
-                }
-                while(out!=null)
-                {
-                    if(isLogin)
-                    {
-                        System.out.println("Write text");
-                        out.writeUTF("[" + Name + "]" + scanner.nextLine());
-                    }
-                }
-            }
-            catch(IOException e)
-            {
-            }
-        }
-    }
-
-    static class ClientReceiver extends Thread
-    {
-        Socket socket;
-        ClientReceiver(Socket socket)
-        {
-            this.socket = socket;
-            try
-            {
-                in = new DataInputStream(socket.getInputStream());
-
-            }catch(IOException e){}
-        }
-
-        public void run()
-        {
-            while(in !=null)
-            {
-                try
-                {
-                    String data = in.readUTF();
-                    //System.out.println(in.readUTF());
-
-                    if(data.contains("LoginSuccessFull@!@!"))
-                    {
-                        System.out.println("이거 받으면 연결됨~~");
-                    }
-                    //Check if login
-                    //if logined
-
-                    getLoginedInfoFromServer(data);
-
-                }catch(IOException e){}
-            }
-        }
-    }
-
-    /*
-    public static void Login ()
-    {
-        try {
-            Scanner scan = new Scanner(System.in);
-            String ID;
-            String PW;
-            System.out.println("ID: ");
-            ID = scan.nextLine();
-            System.out.println("PW: ");
-            PW = scan.nextLine();
-            out.writeUTF("ID_" + ID + ":PW_" + PW);
-            out.flush();
-
-        } catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            System.out.println("program failed in Login");
-            e.printStackTrace();
-        }
-    }
-    */
 
     public static void getLoginedInfoFromServer(String data)
     {
@@ -325,23 +237,135 @@ public class SimpleSocket extends Thread {
 
     public void sendString(String str)
     {
-        PrintWriter pout = new PrintWriter(out, true);
+        PrintWriter pout = new PrintWriter(buffSend, true);
         pout.println(str);
-    }
-
-    public void sendStringtoServer(String str)
-    {
-        try
-        {
-            out.writeUTF(str);
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void setIsLogin(boolean login)
     {
         isLogin = login;
     }
+
+    public Socket getmSocket()
+    {
+        return mSocket;
+    }
+    public static void GetMessageFromActivity(String str)
+    {
+        tempStr =  str;
+    }
+
+    static class ClientSender extends Thread
+    {
+        Socket socket;
+        String name = "";
+
+        ClientSender(Socket socket)
+        {
+            this.socket = socket;
+            try
+            {
+                Dout = new DataOutputStream(socket.getOutputStream());
+            }
+            catch(Exception e){}
+        }
+
+
+        public void run()
+        {
+            while(!isLogin)
+            {
+                try {
+                    Thread.sleep(100);
+                    //Login();
+                    isLogin = true;
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            try
+            {
+
+                if(Dout != null)
+                {
+                    //out.writeUTF(name);
+                }
+                while(Dout!=null)
+                {
+                    if(isLogin)
+                    {
+                        System.out.println("Write text");
+                        Dout.writeUTF(tempStr );
+                    }
+                }
+            }
+            catch(IOException e)
+            {
+            }
+        }
+    }
+
+    static class ClientReceiver extends Thread
+    {
+        Socket socket;
+        ClientReceiver(Socket socket)
+        {
+            this.socket = socket;
+            try
+            {
+                Din = new DataInputStream(socket.getInputStream());
+
+            }catch(IOException e){}
+        }
+
+        public void run()
+        {
+            while(Din !=null)
+            {
+                try
+                {
+                    String data = Din.readUTF();
+                    //System.out.println(in.readUTF());
+
+                    if(data.contains("LoginSuccessFull@!@!"))
+                    {
+                        System.out.println("이거 받으면 연결됨~~");
+                    }
+                    //Check if login
+                    //if logined
+
+                    getLoginedInfoFromServer(data);
+
+                }catch(IOException e){}
+            }
+        }
+    }
+
+    /*
+    public static void Login ()
+    {
+        try {
+            Scanner scan = new Scanner(System.in);
+            String ID;
+            String PW;
+            System.out.println("ID: ");
+            ID = scan.nextLine();
+            System.out.println("PW: ");
+            PW = scan.nextLine();
+            out.writeUTF("ID_" + ID + ":PW_" + PW);
+            out.flush();
+
+        } catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            System.out.println("program failed in Login");
+            e.printStackTrace();
+        }
+    }
+    */
+
+/*
 }
+*/

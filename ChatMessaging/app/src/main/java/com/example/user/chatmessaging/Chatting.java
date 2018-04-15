@@ -1,6 +1,8 @@
 package com.example.user.chatmessaging;
 
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,9 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -32,12 +38,18 @@ public class Chatting extends AppCompatActivity {
     private boolean isRunning = true;
 
     private EditText EDITTEXT;
+    String tempString;
 
     private BufferedReader networkReader;
     private BufferedWriter networkWriter;
 
-    private String ip = "127.0.0.1";//IP
-    public static final int SERVERPORT = 7777;
+    private String ip = "61.255.4.166";//IP
+    public static int SERVERPORT = 7777;
+
+    MyAsyncTask myAsyncTask;
+    static DataOutputStream Dout;
+    static DataInputStream Din;
+    Socket mSocket;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,23 +68,11 @@ public class Chatting extends AppCompatActivity {
             ex.printStackTrace();
         }
 
-        ConnectThread thread2 = new ConnectThread(addr);
-        thread2.start();
-
         mHandler = new ProgressHandler();
 
-        Button button = (Button) findViewById(R.id.sendButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textView.setText(EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")");
-                EDITTEXT.getText().clear();
-            }
-        });
+
 
     }
-
-
 
     public void onStart()
     {
@@ -104,19 +104,23 @@ public class Chatting extends AppCompatActivity {
 
         isRunning = false;
     }
-    /*
-    public void onResume()
-    {
-        super.onResume();
 
-        running = true;
+    public class ProgressHandler extends Handler {
 
-        Thread thread = new BackgroundThread();
-        thread.start();
+        public void handleMessage(Message msg)
+        {
+            GregorianCalendar gcalendar = new GregorianCalendar();
+            textView1 = (TextView) findViewById(R.id.chat2);
+            textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
+        }
     }
-    */
 
-
+    public void onSendButtonClicked(View v)
+    {
+        tempString = EDITTEXT.getText().toString();
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute();
+    }
     //click back button
     public void onButtonBackClicked(View v)
     {
@@ -127,71 +131,92 @@ public class Chatting extends AppCompatActivity {
         finish();
     }
 
-    /*
-    class BackgroundThread extends Thread{
-        public void run()
+    private class MyAsyncTask extends AsyncTask<Void,Void,Void>
+    {
+        protected void onPreExecute()
         {
-            while(running)
-            {
-                try
-                {
-                    Thread.sleep(1000);
-                    chatMessage = EDITTEXT.getText().toString();
-                }
-                catch (InterruptedException ex)
-                {
-                    Log.e("chatmessaging", "Exception in thread",ex);
-                }
-            }
         }
-    }
-    */
 
-
-    public class ProgressHandler extends Handler {
-
-        public void handleMessage(Message msg)
-        {
-            EDITTEXT = (EditText) findViewById(R.id.editText);
-
-            GregorianCalendar gcalendar = new GregorianCalendar();
-            textView1 = (TextView) findViewById(R.id.chat2);
-            textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
-        }
-    }
-
-    class ConnectThread extends Thread{
-        String hostname;
-
-        public ConnectThread(String addr)
-        {
-            hostname = addr;
-        }
-        public void run()
+        @Override
+        protected Void doInBackground(Void... voids)
         {
             try
             {
-                int port = 11001;
-                Socket sock = new Socket(hostname,port);
-
-                ObjectOutputStream outStream = new ObjectOutputStream(sock.getOutputStream());
-
-                outStream.writeObject("Hello AndroidTown on Android");
-                outStream.flush();
-
-                ObjectInputStream inStream = new ObjectInputStream(sock.getInputStream());
-                String obj = (String) inStream.readObject();
-
-                Log.d("MainActivity", "message from Server : " + obj);
-
-                sock.close();
-
+                mSocket = new Socket(ip,SERVERPORT);
+                Dout = new DataOutputStream(mSocket.getOutputStream());
+                Din = new DataInputStream(mSocket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            catch (Exception ex)
+            System.out.println("서버에 연결되었습니다");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            final Sender messageSender = new Sender(); // Initialize chat sender
+            // AsyncTask.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
             {
-                ex.printStackTrace();
+                messageSender.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
+            else {
+                messageSender.execute();
+            }
+            Receiver receiver = new Receiver();
+            receiver.execute();
+
         }
     }
+
+    private class Receiver extends AsyncTask<Void,Void,Void>
+    {
+        protected void onPreExecute()
+        {
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids)
+        {
+            String line;
+
+                line = "";
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid)
+        {
+            Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class Sender extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            try
+            {
+                System.out.println(tempString);
+                Dout.writeUTF("ChattingText_" + tempString);
+                Dout.flush();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            textView.setText(EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")");
+            EDITTEXT.getText().clear();
+        }
+    }
+
 
 }

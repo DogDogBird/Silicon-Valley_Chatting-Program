@@ -35,7 +35,6 @@
             android:name=".Signup"
             android:label="Sign Up"></activity>
 
-        <service android:name="ServerService"></service>
     </application>
 
 </manifest>

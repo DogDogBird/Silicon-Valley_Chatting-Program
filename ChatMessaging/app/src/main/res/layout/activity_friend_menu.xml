@@ -27,6 +27,13 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
+        <Button
+            android:id = "@+id/loginedUserInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dp"
+            android:text="LoginedUser"/>
+
     </LinearLayout>
 
 

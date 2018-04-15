@@ -9,11 +9,30 @@ import android.widget.Toast;
 
 public class FriendMenu extends AppCompatActivity {
 
+    String ID;
+    String PW;
+    String Name;
+    String Status;
     public static final int REQUEST_CODE_MENU2 = 102;
+
+    Button userInfobutton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_menu);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
+        {
+            ID = (String) extras.get("ID");
+            PW = (String) extras.get("PW");
+            Name = (String) extras.get("Name");
+            Status = (String) extras.get("Status");
+        }
+
+        userInfobutton = (Button) findViewById(R.id.loginedUserInfo);
+        userInfobutton.setText(Name);
+
 
         Button button = (Button) findViewById(R.id.backButton);
         button.setOnClickListener(new View.OnClickListener()
@@ -21,7 +40,6 @@ public class FriendMenu extends AppCompatActivity {
             public void onClick(View v)
             {
                 Intent intent = new Intent();
-                intent.putExtra("name", "Logouted");
                 setResult(RESULT_OK,intent);
 
                 System.out.print("Logout");

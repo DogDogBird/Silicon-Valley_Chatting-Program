@@ -45,9 +45,7 @@ public class ClientHandler extends Thread
 	}
 	
 	 class ServerReceiver extends Thread 
-	 {
-		 
-		 
+	 {	 
 		 Socket socket;
 	        public ServerReceiver(Socket socket) {
 	        	System.out.println("new ServerReceived created");
@@ -71,9 +69,8 @@ public class ClientHandler extends Thread
 	            
 	            try 
 	            {
-	            	//
 	            	getUserInfoFromClient();
-	            	            	                
+	            	getChattingData();     
 	            }
 	            catch (IOException ie) 
 	            {
@@ -81,6 +78,30 @@ public class ClientHandler extends Thread
 	            } 
 	            finally {
 	            }
+	        }
+	        public void getUserInfoFromClient() throws IOException
+	        {
+	        	System.out.println("getUserInfoFromClient Start from handler");
+	        	//System.out.println("Current User: " + checked_user.get_Status());
+	        	
+	        	String ID = "";
+	        	String PW = "";
+				String data = dis.readUTF();
+				//System.out.println("data" + data);
+	        	if(data.contains("ID_"))
+				{
+					String[] splited = data.split(":");
+					ID = splited[0].replace("ID_", "");
+					System.out.println("ID: " + ID);
+					PW = splited[1].replace("PW_", "");
+					System.out.println("PW: " + PW);
+					
+					checked_user = CheckUser(ID,PW);	
+					System.out.println("Current User: " + checked_user.get_ID());
+		        	System.out.println("Current User: " + checked_user.get_PW());
+		        	System.out.println("Current User: " + checked_user.get_Name());
+				}
+					 			
 	        }
 	        
 	        public User CheckUser(String ID, String PW) throws IOException
@@ -105,32 +126,7 @@ public class ClientHandler extends Thread
 	    		System.out.println("nothing exists");
 	    		return null;
 	    	}
-	        
-	        public void getUserInfoFromClient() throws IOException
-	        {
-	        	System.out.println("getUserInfoFromClient Start from handler");
-	        	//System.out.println("Current User: " + checked_user.get_Status());
-	        	
-	        	String ID = "";
-	        	String PW = "";
-				String data = dis.readUTF();
-				//System.out.println("data" + data);
-	        	if(data.contains("ID_"))
-				{
-					String[] splited = data.split(":");
-					ID = splited[0].replace("ID_", "");
-					System.out.println("ID: " + ID);
-					PW = splited[1].replace("PW_", "");
-					System.out.println("PW: " + PW);
-					
-					checked_user = CheckUser(ID,PW);
-				}
-					 				
-				System.out.println("Current User: " + checked_user.get_ID());
-	        	System.out.println("Current User: " + checked_user.get_PW());
-	        	System.out.println("Current User: " + checked_user.get_Name());
-	        }
-	        
+	        	             
 	        public void sendLoginedUserInfoToClient() throws IOException
 	        {
 	        	
@@ -145,6 +141,17 @@ public class ClientHandler extends Thread
 					dos.writeUTF("@#Check the ID or Password Please@#");
 		        	dos.flush();
 				}	
+	        }
+	        
+	        public void getChattingData() throws IOException
+	        {
+	        	String chatting = "";
+	        	String data = dis.readUTF();
+	        	if(data.contains("ChattingText_"))
+				{
+	        		chatting = data.replace("ChattingText_", "");
+	        		System.out.println(checked_user.get_ID() + ": " + chatting);
+				}
 	        }
 	    }
 	    public void setUserList(List<User> userList)
