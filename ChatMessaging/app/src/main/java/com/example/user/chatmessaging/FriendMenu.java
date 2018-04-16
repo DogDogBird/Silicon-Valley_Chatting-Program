@@ -33,7 +33,6 @@ public class FriendMenu extends AppCompatActivity {
         userInfobutton = (Button) findViewById(R.id.loginedUserInfo);
         userInfobutton.setText(Name);
 
-
         Button button = (Button) findViewById(R.id.backButton);
         button.setOnClickListener(new View.OnClickListener()
         {
@@ -62,6 +61,16 @@ public class FriendMenu extends AppCompatActivity {
     public void onButtonFriend1Clicked(View v)
     {
         Intent intent = new Intent(getApplicationContext(), Chatting.class);
+        intent.putExtra("SenderID",ID);
+        intent.putExtra("ReceiverID","개개비");
+        startActivityForResult(intent,REQUEST_CODE_MENU2);
+    }
+
+    public void onButtonFriend2Clicked(View v)
+    {
+        Intent intent = new Intent(getApplicationContext(), Chatting.class);
+        intent.putExtra("SenderID",ID);
+        intent.putExtra("ReceiverID","Tam");
         startActivityForResult(intent,REQUEST_CODE_MENU2);
     }
 }

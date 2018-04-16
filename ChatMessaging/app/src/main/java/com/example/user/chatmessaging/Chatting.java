@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 
 public class Chatting extends AppCompatActivity {
@@ -51,27 +52,26 @@ public class Chatting extends AppCompatActivity {
     static DataInputStream Din;
     Socket mSocket;
 
+    static String senderID;
+    static String receicerID;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
+        {
+            senderID = (String) extras.get("SenderID");
+            receicerID = (String) extras.get("ReceiverID");
+        }
+
         EDITTEXT = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.chat1);
 
-        String addr = "";
-        try {
-            addr = InetAddress.getLocalHost().toString();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
 
         mHandler = new ProgressHandler();
-
-
-
     }
 
     public void onStart()
@@ -201,7 +201,7 @@ public class Chatting extends AppCompatActivity {
             try
             {
                 System.out.println(tempString);
-                Dout.writeUTF("ChattingText_" + tempString);
+                Dout.writeUTF("ChattingText_" + senderID + ":" + receicerID + ":" + tempString);
                 Dout.flush();
             }
             catch (IOException e)
@@ -213,7 +213,7 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result)
         {
-            textView.setText(EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")");
+            textView.setText(senderID + ":" + EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")" + receicerID);
             EDITTEXT.getText().clear();
         }
     }

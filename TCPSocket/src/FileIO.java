@@ -89,17 +89,20 @@ public class FileIO  {
 	*/
 	
 	//For saving chatting
-	public static void ChattingFileWrite(String Text, String SenderID, String ReceiverID) throws IOException
+	public static void ChattingFileWrite(String SenderID, String ReceiverID, String Text) throws IOException
 	{
-		PrintWriter pw = new PrintWriter(new FileWriter("Chatting.txt",true));
+		String filename = SenderID + ReceiverID + ".txt";
+		PrintWriter pw = new PrintWriter(new FileWriter(filename,true));
 		
-		pw.print(Text);
-		pw.print(" ");
+		pw.print("\n");
 		pw.print(SenderID);
 		pw.print(" ");
 		pw.print(ReceiverID);
+		pw.print(" ");
+		pw.print(Text);
 		pw.print("\n");
 		
+		System.out.println("file written");
 		pw.close();
 	}
 	

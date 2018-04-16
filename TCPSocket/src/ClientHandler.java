@@ -162,10 +162,19 @@ public class ClientHandler extends Thread
 	        public void getChattingData() throws IOException
 	        {
 	        	String chatting = "";
+	        	String senderID = "";
+	        	String receiverID = "";
+	        	FileIO file = new FileIO();
 	        	if(data.contains("ChattingText_"))
 				{
-	        		chatting = data.replace("ChattingText_", "");
-	        		System.out.println(checked_user.get_ID() + ": " + chatting);
+	        		String [] splited = data.split(":");
+	        		senderID = splited[0].replace("ChattingText_", "");
+	        		receiverID = splited[1];
+	        		chatting = splited[2];
+	        		
+	        		file.ChattingFileWrite(senderID, receiverID, chatting);
+	        		
+	        		System.out.println(senderID + ": " + chatting + " to " + receiverID);
 				}
 	        }
 	        
