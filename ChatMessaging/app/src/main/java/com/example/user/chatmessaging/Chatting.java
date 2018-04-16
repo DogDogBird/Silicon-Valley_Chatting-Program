@@ -53,7 +53,9 @@ public class Chatting extends AppCompatActivity {
     Socket mSocket;
 
     static String senderID;
-    static String receicerID;
+    static String receiverID;
+
+    static boolean sendButtonClicked = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,14 +66,16 @@ public class Chatting extends AppCompatActivity {
         if(extras != null)
         {
             senderID = (String) extras.get("SenderID");
-            receicerID = (String) extras.get("ReceiverID");
+            receiverID = (String) extras.get("ReceiverID");
         }
 
         EDITTEXT = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.chat1);
 
-
         mHandler = new ProgressHandler();
+
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute();
     }
 
     public void onStart()
@@ -117,6 +121,7 @@ public class Chatting extends AppCompatActivity {
 
     public void onSendButtonClicked(View v)
     {
+        sendButtonClicked = true;
         tempString = EDITTEXT.getText().toString();
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.execute();
@@ -145,6 +150,8 @@ public class Chatting extends AppCompatActivity {
                 mSocket = new Socket(ip,SERVERPORT);
                 Dout = new DataOutputStream(mSocket.getOutputStream());
                 Din = new DataInputStream(mSocket.getInputStream());
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -179,9 +186,16 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids)
         {
-            String line;
-
-                line = "";
+            String line = "";
+            try {
+                line = Din.readUTF();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(line.contains("ChattingList"))
+            {
+                System.out.println("Chatting List@@@@@@@@@");
+            }
 
             return null;
         }
@@ -201,7 +215,13 @@ public class Chatting extends AppCompatActivity {
             try
             {
                 System.out.println(tempString);
-                Dout.writeUTF("ChattingText_" + senderID + ":" + receicerID + ":" + tempString);
+                if(sendButtonClicked)
+                {
+                    Dout.writeUTF("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
+                    Dout.flush();
+                    sendButtonClicked = false;
+                }
+                Dout.writeUTF("senderID_" + senderID +":"+"receiverID_" + receiverID);
                 Dout.flush();
             }
             catch (IOException e)
@@ -213,8 +233,11 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result)
         {
-            textView.setText(senderID + ":" + EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")" + receicerID);
-            EDITTEXT.getText().clear();
+            if(EDITTEXT.getText().toString().length() >0)
+            {
+                textView.setText(senderID + ":" + EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")" + receiverID);
+                EDITTEXT.getText().clear();
+            }
         }
     }
 
