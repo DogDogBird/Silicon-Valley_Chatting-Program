@@ -15,6 +15,7 @@ public class ClientHandler extends Thread
 	String CheckLogin = "";
 	
 	static List<User> list;
+	static List<Message> msgList;
 	static User checked_user;
 	
 	static String data;
@@ -84,6 +85,10 @@ public class ClientHandler extends Thread
 	            	{
 	            		System.out.println("get Sign up Data");
 	            		SignUp();
+	            	}
+	            	else if(data.contains("senderID_"))
+	            	{
+	            		SendChattingData();
 	            	}
 	            }
 	            catch (IOException ie) 
@@ -178,6 +183,34 @@ public class ClientHandler extends Thread
 				}
 	        }
 	        
+	        public void SendChattingData()
+	        {
+	        	String senderID = "";
+	        	String receiverID = "";
+	        	String filename = "";
+	        	String text = "";
+	        	FileIO file = new FileIO();
+	        	
+	        	if(data.contains("senderID_"))
+	        	{
+	        		String [] splited = data.split(":");
+	        		senderID = splited[0].replace("senderID_", "");
+	        		receiverID = splited[1].replace("receiverID_", "");
+	        		filename = senderID + receiverID + ".txt";
+	        	}
+	        	try 
+	        	{
+	        		file.ChattingFileWrite(senderID, receiverID, text); //if there is no file on the folder
+					file.UserChattingRead(filename);//Read file
+		        	dos.writeUTF("ChattingList_");
+				} 
+	        	catch (IOException e) 
+	        	{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				};
+	        }
+	        
 	        public void SignUp() throws IOException
 	        {
 	        	String SignUpID = "";
@@ -200,5 +233,9 @@ public class ClientHandler extends Thread
 	    public void setUserList(List<User> userList)
 		{
 			list = userList;
-		}	    
+		}	 
+	    public void setMsgList(List<Message> _msgList)
+		{
+	    	msgList = _msgList;
+		}	 
 }

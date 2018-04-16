@@ -40,70 +40,25 @@ public class FileIO  {
 		pw.close();
 	}
 	
-	/*
-	public static void OFFLINEToONLINE(String ID) throws IOException
-	{
-		String oldFileName = "User.txt";
-		String tmpFileName = "tmp_User.txt";
-		
-		BufferedReader br = null;
-		BufferedWriter bw = null;
-		
-		try
-		{
-			br = new BufferedReader(new FileReader(oldFileName));
-			bw = new BufferedWriter(new FileWriter(tmpFileName));
-			String line;
-			while((line = br.readLine()) != null)
-			{
-				if(line.contains(ID))
-				{
-					line = line.replace("OFFLINE", "ONLINE");
-				}
-				bw.write(line + "\n");
-			}
-		}
-		catch (Exception e)
-		{
-			return;
-		}
-		finally
-		{
-			try
-			{
-				if(br!=null)
-				{
-					br.close();
-				}
-			}
-			catch(IOException e)
-			{
-			}
-		}
-		File oldFile = new File(oldFileName);
-		oldFile.delete();
-		
-		File newFile = new File(tmpFileName);
-		newFile.renameTo(oldFile);
-	}
-	*/
-	
 	//For saving chatting
 	public static void ChattingFileWrite(String SenderID, String ReceiverID, String Text) throws IOException
 	{
+		
 		String filename = SenderID + ReceiverID + ".txt";
 		PrintWriter pw = new PrintWriter(new FileWriter(filename,true));
+			
+		if(Text.length()>0)
+		{
+			pw.print(SenderID);
+			pw.print("\t");
+			pw.print(ReceiverID);
+			pw.print("\t");
+			pw.print(Text);
+			pw.print("\n");
 		
-		pw.print("\n");
-		pw.print(SenderID);
-		pw.print(" ");
-		pw.print(ReceiverID);
-		pw.print(" ");
-		pw.print(Text);
-		pw.print("\n");
-		
-		System.out.println("file written");
-		pw.close();
+			System.out.println("file written");
+			pw.close();
+		}
 	}
 	
 	//Read User -> Thread
@@ -158,24 +113,50 @@ public class FileIO  {
 	}
 	
 	//Read User -> Thread
-		public static synchronized void UserChattingRead() throws IOException
+		public static synchronized void UserChattingRead(String Filename) throws IOException
 		{
-			BufferedReader br = new BufferedReader(new FileReader("Chatting.txt"));
-			while(true)
+			System.out.println("Filename: " + Filename);
+			if(Filename.length()>0)
 			{
-				String line = br.readLine();
-				if(line ==null)
+				BufferedReader br = new BufferedReader(new FileReader(Filename));
+			
+				Message tempMsg;
+				String line = "";
+			
+				try
 				{
-					break;
+					List<Message> msgList = new ArrayList<Message>();
+					
+					while((line = br.readLine()) != null)
+					{			
+						tempMsg = new Message();
+						String[] columns = line.split("\t");
+						String SenderID = columns[0];
+						String ReceiverID = columns[1];
+						String Text = columns[2];
+						tempMsg.setSenderID(SenderID);
+						tempMsg.setReceiverID(ReceiverID);
+						tempMsg.setMsg(Text);
+					
+						msgList.add(tempMsg);					
+					}
+				
+					for(int i=0;i<msgList.size();i++)
+					{
+						System.out.println(msgList.get(i).getSenderID() + ":" + msgList.get(i).getReceiverID() + ":" + msgList.get(i).getMsg());
+					}
+					
+					ClientHandler ch = new ClientHandler();
+					ch.setMsgList(msgList);
 				}
-				String[] columns = line.split(" ");
-				String Text = columns[0];
-				String SenderID = columns[1];
-				String ReceiverID = columns[2];
-				//System.out.println("Text: " + Text);
-				//System.out.println("SenderID: " + SenderID);
-				//System.out.println("ReceiverID" + ReceiverID + "\n");
+				catch(IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
+			else
+				return;
+		
 		}
 	
 }
