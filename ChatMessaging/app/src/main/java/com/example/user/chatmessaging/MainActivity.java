@@ -23,19 +23,15 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-//import static com.example.user.chatmessaging.SimpleSocket.loginedUser;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_MENU = 101;
-    List<User> userList;
     EditText editTextID;
     EditText editTextPW;
 
     private String ip = "61.255.4.166";//IP
     public static int SERVERPORT = 7777;
-
-    //static SimpleSocket ssocket;
 
     MyAsyncTask myAsyncTask;
     static DataOutputStream Dout;
@@ -57,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         loginedUser = new User();
-        //ssocket = new SimpleSocket(ip,SERVERPORT,mHandler);
-        //ssocket.start();
-        //userList = new ArrayList<>();
     }
 
     public void onButton1Clicked(View v)
@@ -125,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
             }
             Receiver receiver = new Receiver();
             receiver.execute();
-
         }
     }
 
@@ -187,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(ID.length()>=1)
                 {
-                    Dout.writeUTF("ID_" + ID + ":" + "PW_" + PW);
+                    Dout.writeUTF("LoginID_" + ID + ":" + "LoginPW_" + PW);
                 }
                 Dout.flush();
             }

@@ -23,23 +23,19 @@ public class FileIO  {
 	public static void ThreadStart()
 	{
 		Thread t1 = new Thread(new ReadingUserThread(),"A");
-		t1.start();
-		
-		
+		t1.start();		
 	}
 	//For sign Up
-	public static void UserFileWrite(String ID,String PW, String Name, String Status) throws IOException
+	public static void UserFileWrite(String ID,String PW, String Name) throws IOException
 	{
 		PrintWriter pw = new PrintWriter(new FileWriter("User.txt",true));
 		
+		pw.print("\n");
 		pw.print(ID);
 		pw.print(" ");
 		pw.print(PW);
 		pw.print(" ");
 		pw.print(Name);
-		pw.print(" ");
-		pw.print("OFFLINE");
-		pw.print("\n");
 		
 		pw.close();
 	}

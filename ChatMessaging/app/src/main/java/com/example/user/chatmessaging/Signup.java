@@ -2,21 +2,35 @@ package com.example.user.chatmessaging;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 public class Signup extends AppCompatActivity {
 
-    EditText etID;
-    EditText editTextPW ;
-    EditText editTextName;
+    EditText ID;
+    EditText PW ;
+    EditText Name;
 
+    Socket mSocket;
+    DataOutputStream Dout;
+    DataInputStream Din;
+
+    MyAsyncTask myAsyncTask;
+
+    private String ip = "61.255.4.166";//IP
+    public static int SERVERPORT = 7777;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,33 +41,104 @@ public class Signup extends AppCompatActivity {
 
     public void onButtonSignUpClicked(View v)
     {
-        etID = (EditText) findViewById(R.id.editID);
-        editTextPW = (EditText) findViewById(R.id.editPW);
-        editTextName = (EditText) findViewById(R.id.editName);
-        String data = etID.getText().toString();
-        try
-        {
-            FileOutputStream fos = openFileOutput("User.txt", Context.MODE_APPEND);
-            PrintWriter out = new PrintWriter(fos);
-            out.println(data);
-            out.close();
+        ID = (EditText) findViewById(R.id.editID);
+        PW = (EditText) findViewById(R.id.editPW);
+        Name = (EditText) findViewById(R.id.editName);
 
-            Toast.makeText(this,"file saved",Toast.LENGTH_LONG).show();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute();
+
     }
 
     public void onButtonCancelClicked(View v)
     {
         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
-    private void writeToFile(String fileName)
+    private class MyAsyncTask extends AsyncTask<Void,Void,Void>
     {
+        protected void onPreExecute()
+        {
+        }
 
+        @Override
+        protected Void doInBackground(Void... voids)
+        {
+            try
+            {
+                mSocket = new Socket(ip,SERVERPORT);
+                Dout = new DataOutputStream(mSocket.getOutputStream());
+                Din = new DataInputStream(mSocket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("서버에 연결되었습니다");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            final Sender messageSender = new Sender(); // Initialize chat sender
+            // AsyncTask.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            {
+                messageSender.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+            else {
+                messageSender.execute();
+            }
+            Receiver receiver = new Receiver();
+            receiver.execute();
+        }
+    }
+
+    private class Receiver extends AsyncTask<Void,Void,Void>
+    {
+        protected void onPreExecute()
+        {
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids)
+        {
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid)
+        {
+
+        }
+    }
+
+    private class Sender extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            try
+            {
+                if(ID.getText().toString().length()>=1 && PW.getText().toString().length()>=1 && Name.getText().toString().length() >=1)
+                {
+                    Dout.writeUTF("SignUpD_" + ID.getText().toString() + ":" + "SignUpPW_" + PW.getText().toString() + ":" + "SignUpName_" + Name.getText().toString());
+                }
+                Dout.flush();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            Toast.makeText(getApplicationContext(),"SignUp Done",Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 }

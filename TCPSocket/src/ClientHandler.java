@@ -17,7 +17,7 @@ public class ClientHandler extends Thread
 	static List<User> list;
 	static User checked_user;
 	
-	
+	static String data;
 	
 	public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos)
 	{
@@ -69,8 +69,22 @@ public class ClientHandler extends Thread
 	            
 	            try 
 	            {
-	            	getUserInfoFromClient();
-	            	getChattingData();     
+	            	data = dis.readUTF();
+	            	System.out.println("data   " + data);
+	            	if(data.contains("LoginID_"))
+	            	{
+	            		getUserInfoFromClient();
+	            	}
+	            	else if(data.contains("ChattingText_"))
+	            	{
+	            		System.out.println("get Chatting Data");
+	            		getChattingData();    
+	            	}
+	            	else if(data.contains("SignUpD_"))
+	            	{
+	            		System.out.println("get Sign up Data");
+	            		SignUp();
+	            	}
 	            }
 	            catch (IOException ie) 
 	            {
@@ -86,20 +100,22 @@ public class ClientHandler extends Thread
 	        	
 	        	String ID = "";
 	        	String PW = "";
-				String data = dis.readUTF();
-				//System.out.println("data" + data);
-	        	if(data.contains("ID_"))
+				System.out.println("data: " + data);
+	        	if(data.contains("LoginID_"))
 				{
 					String[] splited = data.split(":");
-					ID = splited[0].replace("ID_", "");
+					ID = splited[0].replace("LoginID_", "");
 					System.out.println("ID: " + ID);
-					PW = splited[1].replace("PW_", "");
+					PW = splited[1].replace("LoginPW_", "");
 					System.out.println("PW: " + PW);
 					
-					checked_user = CheckUser(ID,PW);	
-					System.out.println("Current User: " + checked_user.get_ID());
-		        	System.out.println("Current User: " + checked_user.get_PW());
-		        	System.out.println("Current User: " + checked_user.get_Name());
+					checked_user = CheckUser(ID,PW);
+					if(checked_user != null)
+					{
+						System.out.println("Current User: " + checked_user.get_ID());
+						System.out.println("Current User: " + checked_user.get_PW());
+						System.out.println("Current User: " + checked_user.get_Name());
+					}
 				}
 					 			
 	        }
@@ -146,11 +162,29 @@ public class ClientHandler extends Thread
 	        public void getChattingData() throws IOException
 	        {
 	        	String chatting = "";
-	        	String data = dis.readUTF();
 	        	if(data.contains("ChattingText_"))
 				{
 	        		chatting = data.replace("ChattingText_", "");
 	        		System.out.println(checked_user.get_ID() + ": " + chatting);
+				}
+	        }
+	        
+	        public void SignUp() throws IOException
+	        {
+	        	String SignUpID = "";
+	        	String SignUpPW = "";
+	        	String SignUpName = "";
+	        	FileIO file = new FileIO();
+	        	if(data.contains("SignUpD_"))
+				{
+	        		String[] splited = data.split(":");
+	        		SignUpID = splited[0].replace("SignUpD_", "");
+	        		System.out.println("SignUpID: " + SignUpID);
+	        		SignUpPW = splited[1].replace("SignUpPW_", "");
+					System.out.println("SignUpPW: " + SignUpPW);
+					SignUpName = splited[2].replace("SignUpName_", "");
+					System.out.println("SignUpName: " + SignUpName);
+					file.UserFileWrite(SignUpID, SignUpPW, SignUpName);
 				}
 	        }
 	    }
