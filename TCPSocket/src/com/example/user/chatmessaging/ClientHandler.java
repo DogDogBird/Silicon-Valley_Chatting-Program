@@ -1,6 +1,8 @@
+package com.example.user.chatmessaging;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.List;
@@ -9,13 +11,14 @@ public class ClientHandler extends Thread
 {
 	DataInputStream dis;
 	DataOutputStream dos;
+	ObjectOutputStream oos;
 	Socket s;
 	
 	Boolean isLogin = false;
 	String CheckLogin = "";
 	
 	static List<User> list;
-	static List<Message> msgList;
+	static List<ChattingMessage> msgList;
 	static User checked_user;
 	
 	static String data;
@@ -56,8 +59,7 @@ public class ClientHandler extends Thread
 	            	//FileIO fileThread = new FileIO();
 	            	//fileThread.ThreadStart();
 	                dis = new DataInputStream(socket.getInputStream());
-	                dos = new DataOutputStream(socket.getOutputStream());
-	               
+	                dos = new DataOutputStream(socket.getOutputStream());              
 	            } 
 	            catch (IOException ie) 
 	            {
@@ -88,7 +90,12 @@ public class ClientHandler extends Thread
 	            	}
 	            	else if(data.contains("senderID_"))
 	            	{
+	            		System.out.println("start SendChattingData");
 	            		SendChattingData();
+	            	}
+	            	else if(data.contains("Received well"))
+	            	{
+	            		System.out.println("Received well from client");
 	            	}
 	            }
 	            catch (IOException ie) 
@@ -120,6 +127,11 @@ public class ClientHandler extends Thread
 						System.out.println("Current User: " + checked_user.get_ID());
 						System.out.println("Current User: " + checked_user.get_PW());
 						System.out.println("Current User: " + checked_user.get_Name());
+					}
+					else if(checked_user == null)
+					{
+						socket.close();
+						return;
 					}
 				}
 					 			
@@ -190,7 +202,7 @@ public class ClientHandler extends Thread
 	        	String filename = "";
 	        	String text = "";
 	        	FileIO file = new FileIO();
-	        	
+	        	System.out.println(data);
 	        	if(data.contains("senderID_"))
 	        	{
 	        		String [] splited = data.split(":");
@@ -202,13 +214,34 @@ public class ClientHandler extends Thread
 	        	{
 	        		file.ChattingFileWrite(senderID, receiverID, text); //if there is no file on the folder
 					file.UserChattingRead(filename);//Read file
-		        	dos.writeUTF("ChattingList_");
+		        	//dos.writeUTF("ChattingList_");
 				} 
 	        	catch (IOException e) 
 	        	{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				};
+				
+				for(int i=0;i<msgList.size();i++)
+				{
+					String printsenderID = msgList.get(i).getSenderID();
+					String printreceiverID = msgList.get(i).getReceiverID();
+					String printMessage = msgList.get(i).getMsg();
+					
+					System.out.println("Sender: " + printsenderID + "/receiver: " + printreceiverID + "/Message: " + printMessage);
+				}
+					try 
+					{
+		                oos = new ObjectOutputStream(socket.getOutputStream());	 
+						oos.writeObject(msgList);
+						oos.flush();
+						oos.close();
+					} 
+					catch (IOException e) 
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	        }
 	        
 	        public void SignUp() throws IOException
@@ -234,7 +267,7 @@ public class ClientHandler extends Thread
 		{
 			list = userList;
 		}	 
-	    public void setMsgList(List<Message> _msgList)
+	    public void setMsgList(List<ChattingMessage> _msgList)
 		{
 	    	msgList = _msgList;
 		}	 

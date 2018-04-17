@@ -23,8 +23,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 
 
@@ -50,12 +52,15 @@ public class Chatting extends AppCompatActivity {
     MyAsyncTask myAsyncTask;
     static DataOutputStream Dout;
     static DataInputStream Din;
+    static ObjectInputStream Oin;
     Socket mSocket;
 
     static String senderID;
     static String receiverID;
 
-    static boolean sendButtonClicked = false;
+    static boolean sendButtonClicked;
+
+    static List<ChattingMessage> msgList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,8 @@ public class Chatting extends AppCompatActivity {
 
         EDITTEXT = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.chat1);
+
+        sendButtonClicked = false;
 
         mHandler = new ProgressHandler();
 
@@ -151,7 +158,6 @@ public class Chatting extends AppCompatActivity {
                 Dout = new DataOutputStream(mSocket.getOutputStream());
                 Din = new DataInputStream(mSocket.getInputStream());
 
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -181,22 +187,47 @@ public class Chatting extends AppCompatActivity {
     {
         protected void onPreExecute()
         {
+
         }
 
         @Override
         protected Void doInBackground(Void... voids)
         {
-            String line = "";
-            try {
-                line = Din.readUTF();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if(line.contains("ChattingList"))
+            if(!sendButtonClicked)
             {
-                System.out.println("Chatting List@@@@@@@@@");
-            }
+                String line = "";
+                if (line.contains("ChattingList"))
+                {
+                    System.out.println("Chatting List@@@@@@@@@");
+                }
 
+                try
+                {
+                    try
+                    {
+                        msgList = new ArrayList<ChattingMessage>();
+                        Oin = new ObjectInputStream(mSocket.getInputStream());
+                        msgList = (ArrayList<ChattingMessage>) Oin.readObject();
+                        Oin.close();
+                    }
+                    catch (ClassNotFoundException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                    for (int i = 0; i < msgList.size(); i++)
+                    {
+                        String printsenderID = msgList.get(i).getSenderID();
+                        String printreceiverID = msgList.get(i).getReceiverID();
+                        String printMessage = msgList.get(i).getMsg();
+
+                        System.out.println("Sender: " + printsenderID + "/receiver: " + printreceiverID + "/Message: " + printMessage);
+                    }
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
             return null;
         }
 
@@ -217,12 +248,17 @@ public class Chatting extends AppCompatActivity {
                 System.out.println(tempString);
                 if(sendButtonClicked)
                 {
+                    System.out.println("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
                     Dout.writeUTF("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
                     Dout.flush();
                     sendButtonClicked = false;
                 }
-                Dout.writeUTF("senderID_" + senderID +":"+"receiverID_" + receiverID);
-                Dout.flush();
+                else
+                {
+                    System.out.println("senderID_" + senderID + ":" + "receiverID_" + receiverID);
+                    Dout.writeUTF("senderID_" + senderID + ":" + "receiverID_" + receiverID);
+                    Dout.flush();
+                }
             }
             catch (IOException e)
             {

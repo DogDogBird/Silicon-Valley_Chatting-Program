@@ -1,3 +1,4 @@
+package com.example.user.chatmessaging;
 
 
 import java.io.IOException;
@@ -120,16 +121,16 @@ public class FileIO  {
 			{
 				BufferedReader br = new BufferedReader(new FileReader(Filename));
 			
-				Message tempMsg;
+				ChattingMessage tempMsg;
 				String line = "";
 			
 				try
 				{
-					List<Message> msgList = new ArrayList<Message>();
+					List<ChattingMessage> msgList = new ArrayList<ChattingMessage>();
 					
 					while((line = br.readLine()) != null)
 					{			
-						tempMsg = new Message();
+						tempMsg = new ChattingMessage();
 						String[] columns = line.split("\t");
 						String SenderID = columns[0];
 						String ReceiverID = columns[1];

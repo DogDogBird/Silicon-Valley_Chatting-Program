@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Chatting">
+    tools:context=".Chatting"
+    android:background="#55ff7f00">
+
 
     <Button
         android:id = "@+id/backButton2"
@@ -12,7 +14,9 @@
         android:layout_height="50dp"
         android:text="back"
         android:textSize="10dp"
-        android:onClick="onButtonBackClicked"/>
+        android:onClick="onButtonBackClicked"
+        android:background="#ff7f00"
+        android:textColor="#ffffff"/>
 
     <EditText
         android:id = "@+id/editText"

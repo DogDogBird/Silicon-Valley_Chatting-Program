@@ -1,5 +1,7 @@
+package com.example.user.chatmessaging;
+import java.io.Serializable;
 
-public class Message 
+public class ChattingMessage implements Serializable
 {
 	private String senderID;
 	private String receiverID;
