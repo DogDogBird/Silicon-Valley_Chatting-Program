@@ -31,23 +31,23 @@ public class FileIO  {
 	{
 		PrintWriter pw = new PrintWriter(new FileWriter("User.txt",true));
 		
-		pw.print("\n");
 		pw.print(ID);
 		pw.print(" ");
 		pw.print(PW);
 		pw.print(" ");
 		pw.print(Name);
-		
+		pw.print("\n");
 		pw.close();
 	}
 	
 	//For saving chatting
 	public static void ChattingFileWrite(String SenderID, String ReceiverID, String Text) throws IOException
-	{
-		
+	{		
 		String filename = SenderID + ReceiverID + ".txt";
+		String filename2 = ReceiverID + SenderID + ".txt";
 		PrintWriter pw = new PrintWriter(new FileWriter(filename,true));
-			
+		PrintWriter pw2 = new PrintWriter(new FileWriter(filename2,true));	
+		
 		if(Text.length()>0)
 		{
 			pw.print(SenderID);
@@ -56,9 +56,17 @@ public class FileIO  {
 			pw.print("\t");
 			pw.print(Text);
 			pw.print("\n");
+			
+			pw2.print(SenderID);
+			pw2.print("\t");
+			pw2.print(ReceiverID);
+			pw2.print("\t");
+			pw2.print(Text);
+			pw2.print("\n");
 		
 			System.out.println("file written");
 			pw.close();
+			pw2.close();
 		}
 	}
 	
@@ -114,9 +122,12 @@ public class FileIO  {
 	}
 	
 	//Read User -> Thread
-		public static synchronized void UserChattingRead(String Filename) throws IOException
+		public static synchronized void UserChattingRead(String senderID,String receiverID,String text) throws IOException
 		{
+			String Filename = senderID + receiverID + ".txt";
+			
 			System.out.println("Filename: " + Filename);
+			
 			if(Filename.length()>0)
 			{
 				BufferedReader br = new BufferedReader(new FileReader(Filename));

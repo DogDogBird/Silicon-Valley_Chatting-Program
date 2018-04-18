@@ -29,8 +29,7 @@
             android:name=".FriendMenu"
             android:label="Friend Menu"/>
         <activity
-            android:name=".Chatting"
-            android:label="Kyubin" />
+            android:name=".Chatting"/>
         <activity
             android:name=".Signup"
             android:label="Sign Up"></activity>

@@ -8,9 +8,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +63,8 @@ public class Chatting extends AppCompatActivity {
     static boolean sendButtonClicked;
 
     static List<ChattingMessage> msgList;
+    static LinearLayout root;
+    TextView t[];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,9 +77,9 @@ public class Chatting extends AppCompatActivity {
             senderID = (String) extras.get("SenderID");
             receiverID = (String) extras.get("ReceiverID");
         }
+        setTitle(receiverID);
 
         EDITTEXT = (EditText) findViewById(R.id.editText);
-        textView = (TextView) findViewById(R.id.chat1);
 
         sendButtonClicked = false;
 
@@ -121,8 +125,7 @@ public class Chatting extends AppCompatActivity {
         public void handleMessage(Message msg)
         {
             GregorianCalendar gcalendar = new GregorianCalendar();
-            textView1 = (TextView) findViewById(R.id.chat2);
-            textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
+//            textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
         }
     }
 
@@ -234,6 +237,28 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid)
         {
+            root = (LinearLayout)findViewById(R.id.rl);
+            root.setVerticalGravity(Gravity.BOTTOM);
+            t = new TextView[100];
+            LinearLayout.LayoutParams dim = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            for(int i = 0;i<msgList.size();i++)
+            {
+                t[i] = new TextView(getApplicationContext());
+                t[i].setLayoutParams(dim);
+                t[i].setText(msgList.get(i).getMsg());
+                t[i].setTextSize(20);
+                if(msgList.get(i).getSenderID().equals(senderID))
+                {
+                    t[i].setGravity(Gravity.RIGHT);
+                }
+                else
+                {
+                    t[i].setGravity(Gravity.LEFT);
+                }
+                root.addView(t[i]);
+            }
+
             Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
         }
     }
@@ -271,7 +296,7 @@ public class Chatting extends AppCompatActivity {
         {
             if(EDITTEXT.getText().toString().length() >0)
             {
-                textView.setText(senderID + ":" + EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")" + receiverID);
+                //textView.setText(senderID + ":" + EDITTEXT.getText().toString() + "(" + textView1.getText().toString() + ")" + receiverID);
                 EDITTEXT.getText().clear();
             }
         }

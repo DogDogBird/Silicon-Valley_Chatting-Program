@@ -213,7 +213,7 @@ public class ClientHandler extends Thread
 	        	try 
 	        	{
 	        		file.ChattingFileWrite(senderID, receiverID, text); //if there is no file on the folder
-					file.UserChattingRead(filename);//Read file
+					file.UserChattingRead(senderID, receiverID, text);//Read file
 		        	//dos.writeUTF("ChattingList_");
 				} 
 	        	catch (IOException e) 

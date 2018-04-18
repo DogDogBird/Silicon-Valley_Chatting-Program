@@ -1,5 +1,6 @@
 package com.example.user.chatmessaging;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ public class FriendMenu extends AppCompatActivity {
     String Name;
     String Status;
     public static final int REQUEST_CODE_MENU2 = 102;
+
 
     Button userInfobutton;
     @Override
@@ -62,7 +64,7 @@ public class FriendMenu extends AppCompatActivity {
     {
         Intent intent = new Intent(getApplicationContext(), Chatting.class);
         intent.putExtra("SenderID",ID);
-        intent.putExtra("ReceiverID","개개비");
+        intent.putExtra("ReceiverID","kyubin");
         startActivityForResult(intent,REQUEST_CODE_MENU2);
     }
 
@@ -70,7 +72,7 @@ public class FriendMenu extends AppCompatActivity {
     {
         Intent intent = new Intent(getApplicationContext(), Chatting.class);
         intent.putExtra("SenderID",ID);
-        intent.putExtra("ReceiverID","Tam");
+        intent.putExtra("ReceiverID","Tami");
         startActivityForResult(intent,REQUEST_CODE_MENU2);
     }
 }
