@@ -57,6 +57,7 @@ public class FriendMenu extends AppCompatActivity {
         {
             String name = data.getExtras().getString("name");
             Toast.makeText(this,name,Toast.LENGTH_LONG).show();
+
         }
     }
 

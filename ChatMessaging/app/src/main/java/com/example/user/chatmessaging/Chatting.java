@@ -141,7 +141,6 @@ public class Chatting extends AppCompatActivity {
     {
         Intent intent =new Intent();
         intent.putExtra("name","out of chatting");
-        setResult(RESULT_OK,intent);
 
         finish();
     }
@@ -237,29 +236,45 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid)
         {
-            root = (LinearLayout)findViewById(R.id.rl);
+            root = (LinearLayout) findViewById(R.id.rl);
             root.setVerticalGravity(Gravity.BOTTOM);
             t = new TextView[100];
-            LinearLayout.LayoutParams dim = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-
-            for(int i = 0;i<msgList.size();i++)
+            LinearLayout.LayoutParams dim = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            if(!sendButtonClicked)
             {
-                t[i] = new TextView(getApplicationContext());
-                t[i].setLayoutParams(dim);
-                t[i].setText(msgList.get(i).getMsg());
-                t[i].setTextSize(20);
-                if(msgList.get(i).getSenderID().equals(senderID))
+                for (int i = 0; i < msgList.size(); i++)
                 {
-                    t[i].setGravity(Gravity.RIGHT);
+                    t[i] = new TextView(getApplicationContext());
+                    t[i].setLayoutParams(dim);
+                    t[i].setText(msgList.get(i).getMsg());
+                    t[i].setTextSize(20);
+                    if (msgList.get(i).getSenderID().equals(senderID))
+                    {
+                        t[i].setGravity(Gravity.RIGHT);
+                    }
+                    else
+                    {
+                        t[i].setGravity(Gravity.LEFT);
+                    }
+                    root.addView(t[i]);
                 }
-                else
-                {
-                    t[i].setGravity(Gravity.LEFT);
-                }
-                root.addView(t[i]);
-            }
 
-            Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
+                try {
+                    mSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                TextView tempTextView;
+                tempTextView = new TextView(getApplicationContext());
+                tempTextView.setText(EDITTEXT.getText().toString());
+                tempTextView.setTextSize(20);
+                tempTextView.setGravity(Gravity.RIGHT);
+                root.addView(tempTextView);
+            }
         }
     }
 

@@ -167,6 +167,14 @@ public class MainActivity extends AppCompatActivity {
                 editTextPW.setText("");
                 editTextID.setText("");
             }
+            try
+            {
+                mSocket.close();
+                System.out.println("Socket closed");
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
