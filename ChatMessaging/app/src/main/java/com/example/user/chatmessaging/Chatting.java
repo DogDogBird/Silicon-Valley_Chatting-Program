@@ -135,6 +135,7 @@ public class Chatting extends AppCompatActivity {
         tempString = EDITTEXT.getText().toString();
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.execute();
+        Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
     }
     //click back button
     public void onButtonBackClicked(View v)
@@ -259,7 +260,6 @@ public class Chatting extends AppCompatActivity {
                     root.addView(t[i]);
                 }
 
-                Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
                 try {
                     mSocket.close();
                 } catch (IOException e) {
@@ -275,7 +275,9 @@ public class Chatting extends AppCompatActivity {
                 tempTextView.setGravity(Gravity.RIGHT);
                 root.addView(tempTextView);
             }
+            sendButtonClicked = false;
         }
+
     }
 
     private class Sender extends AsyncTask<Void, Void, Void>
@@ -291,7 +293,6 @@ public class Chatting extends AppCompatActivity {
                     System.out.println("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
                     Dout.writeUTF("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
                     Dout.flush();
-                    sendButtonClicked = false;
                 }
                 else
                 {
