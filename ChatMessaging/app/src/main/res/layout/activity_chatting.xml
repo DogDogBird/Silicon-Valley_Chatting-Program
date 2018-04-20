@@ -14,25 +14,39 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.1">
-    <Button
+        android:layout_weight="0.1"
+        android:weightSum="10">
+    <ImageButton
+        android:layout_weight="0.01"
         android:id = "@+id/backButton2"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:text="back"
         android:textSize="10dp"
         android:onClick="onButtonBackClicked"
-        android:background="#ff7f00"
-        android:textColor="#ffffff"/>
+        android:background="@drawable/back_button"
+        android:textColor="#ffffff" />
 
         <TextView
+            android:layout_weight="9.96"
             android:id = "@+id/timeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:text="time"
             android:layout_gravity="center"
-            android:layout_marginLeft="40dp"
             android:textSize="20dp"/>
+
+        <ImageButton
+            android:id = "@+id/refreshButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="back"
+            android:textSize="10dp"
+            android:onClick="onButtonRefreshClicked"
+            android:background="@drawable/refresh"
+            android:textColor="#ffffff" />
     </LinearLayout>
 
     <ScrollView

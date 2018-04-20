@@ -68,6 +68,7 @@ public class Chatting extends AppCompatActivity {
     static STATUS status;
 
     static boolean sendButtonClicked;
+    static boolean refreshButtonClicked;
 
     static List<ChattingMessage> msgList;
     static LinearLayout root;
@@ -91,6 +92,7 @@ public class Chatting extends AppCompatActivity {
         timeTextView = (TextView) findViewById(R.id.timeText);
 
         sendButtonClicked = false;
+        refreshButtonClicked = false;
 
         mHandler = new ProgressHandler();
 
@@ -147,6 +149,14 @@ public class Chatting extends AppCompatActivity {
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.execute();
         Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
+    }
+
+    public void onButtonRefreshClicked(View v)
+    {
+        refreshButtonClicked = true;
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute();
+        Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_LONG).show();
     }
     //click back button
     public void onButtonBackClicked(View v)
@@ -248,10 +258,15 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid)
         {
+
             root = (LinearLayout) findViewById(R.id.rl);
             root.setVerticalGravity(Gravity.BOTTOM);
             t = new TextView[100];
             LinearLayout.LayoutParams dim = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            if(refreshButtonClicked)
+            {
+                getCurrentFocus().clearFocus();
+            }
             if(!sendButtonClicked)
             {
                 for (int i = 0; i < msgList.size(); i++)
@@ -284,7 +299,7 @@ public class Chatting extends AppCompatActivity {
             {
                 TextView tempTextView;
                 tempTextView = new TextView(getApplicationContext());
-                tempTextView.setText(timeStamp + "\n" + EDITTEXT.getText().toString());
+                tempTextView.setText(timeStamp + "\n" + tempString);
                 tempTextView.setTextSize(20);
                 tempTextView.setGravity(Gravity.RIGHT);
                 tempTextView.setPadding(16,16,16,16);
@@ -293,6 +308,7 @@ public class Chatting extends AppCompatActivity {
                 root.addView(tempTextView);
             }
             sendButtonClicked = false;
+            refreshButtonClicked = false;
         }
 
     }
@@ -339,4 +355,5 @@ public class Chatting extends AppCompatActivity {
         mDate = new Date(mNow);
         return mFormat.format(mDate);
     }
+
 }
