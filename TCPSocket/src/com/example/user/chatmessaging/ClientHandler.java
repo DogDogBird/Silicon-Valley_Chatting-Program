@@ -279,6 +279,17 @@ public class ClientHandler extends Thread
 					System.out.println("SignUpName: " + SignUpName);
 					PartnerID = splited[3].replace("PartnerID_", "");
 					System.out.println("PartnerID: " + PartnerID);
+					
+					for(int i=0;i<list.size();i++)
+					{
+						if(list.get(i).get_ID().equals(SignUpID))
+						{
+							System.out.println("ID Already exists");
+							dos.writeUTF("ID Already Exists!@#!@#");
+							dos.flush();
+							return;
+						}
+					}
 					file.UserFileWrite(SignUpID, SignUpPW, SignUpName,PartnerID);
 				}
 	        }

@@ -30,6 +30,8 @@ public class Signup extends AppCompatActivity {
 
     MyAsyncTask myAsyncTask;
 
+    static boolean isSignUp = false;
+
     private String ip = "61.255.4.166";//IP
     public static int SERVERPORT = 7777;
     @Override
@@ -106,14 +108,39 @@ public class Signup extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids)
         {
-
+            try {
+                String line = Din.readUTF();
+                if(line.contains("ID Already Exists!@#!@#"))
+                {
+                    isSignUp = false;
+                }
+                else
+                {
+                    isSignUp = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid)
         {
-
+            if(isSignUp)
+            {
+                Toast.makeText(getApplicationContext(),"SignUp Done",Toast.LENGTH_LONG).show();
+                finish();
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(),"ID already exists",Toast.LENGTH_LONG).show();
+                ID.setText("");
+                PW.setText("");
+                Name.setText("");
+                PartnerID.setText("");
+            }
+            isSignUp = false;
         }
     }
 
@@ -140,8 +167,7 @@ public class Signup extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result)
         {
-            Toast.makeText(getApplicationContext(),"SignUp Done",Toast.LENGTH_LONG).show();
-            finish();
+
         }
     }
 }
