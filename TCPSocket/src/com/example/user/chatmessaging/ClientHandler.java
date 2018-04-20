@@ -4,8 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ClientHandler extends Thread
 {
@@ -20,8 +23,10 @@ public class ClientHandler extends Thread
 	static List<User> list;
 	static List<ChattingMessage> msgList;
 	static User checked_user;
+	static HashMap<String, String> userStatusList;
 	
 	static String data;
+	static String[] statedata;
 	
 	public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos)
 	{
@@ -97,6 +102,13 @@ public class ClientHandler extends Thread
 	            	{
 	            		System.out.println("Received well from client");
 	            	}
+	            	else if(data.contains("StatusIs_"))
+	            	{
+	            		statedata = data.split(":::");
+	            		System.out.println("SetUserStatus");
+	            		setUserState();
+	            		sendUserState();
+	            	}
 	            }
 	            catch (IOException ie) 
 	            {
@@ -134,8 +146,7 @@ public class ClientHandler extends Thread
 						socket.close();
 						return;
 					}
-				}
-					 			
+				}			 			
 	        }
 	        
 	        public User CheckUser(String ID, String PW) throws IOException
@@ -271,6 +282,48 @@ public class ClientHandler extends Thread
 					file.UserFileWrite(SignUpID, SignUpPW, SignUpName,PartnerID);
 				}
 	        }
+	        
+	        public void setUserState() throws IOException
+	        {
+	        	System.out.println("Writing User State in Server");
+	        	FileIO file = new FileIO();
+	        	String ID = "";
+	        	String[] splited = statedata[0].split(":");
+	        	if(data.contains("StatusIs_OFFLINE"))
+            	{
+	        		file.UserStateFileWrite(splited[0],"OFFLINE");
+            	}
+	        	else if(data.contains("StatusIs_BUSY"))
+            	{
+	        		file.UserStateFileWrite(splited[0],"BUSY");
+            	}
+	        	else if(data.contains("StatusIs_ONLINE"))
+            	{
+	        		file.UserStateFileWrite(splited[0],"ONLINE");
+            	}
+	        }
+	        public void sendUserState() throws IOException
+	        {	        	
+	        	System.out.println("Sending User State Date to Client");
+	        	String PartnerID = statedata[1].replace("CheckUsersState_:", "");
+	                	        	
+	        	FileIO file = new FileIO();
+	        	file.ReadUserState();
+	        	
+	        	Set set = userStatusList.entrySet();
+				Iterator iterator = set.iterator();
+				while(iterator.hasNext())
+				{
+					Map.Entry mentry = (Map.Entry)iterator.next();
+					if(mentry.getKey().equals(PartnerID))
+					{
+						dos.writeUTF("State_" + mentry.getValue());
+						dos.flush();
+					}
+					System.out.println("key is: " + mentry.getKey() + " & Value is: " + mentry.getValue());
+				}
+				
+	        }
 	    }
 	    public void setUserList(List<User> userList)
 		{
@@ -279,5 +332,9 @@ public class ClientHandler extends Thread
 	    public void setMsgList(List<ChattingMessage> _msgList)
 		{
 	    	msgList = _msgList;
+		}	
+	    public void setUserStateList(HashMap<String, String> userState)
+		{
+	    	userStatusList = userState;
 		}	 
 }

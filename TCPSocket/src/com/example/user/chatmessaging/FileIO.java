@@ -10,7 +10,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FileIO  {
@@ -179,6 +183,66 @@ public class FileIO  {
 			else
 				return;
 		
+		}
+		
+		public static void UserStateFileWrite(String ID,String State) throws IOException
+		{
+			PrintWriter pw = new PrintWriter(new FileWriter("UserState.txt",true));
+			
+			pw.print(ID);
+			pw.print("\t");
+			pw.print(State);
+			pw.print("\n");
+			pw.close();
+		}
+		
+		public static void ReadUserState() throws FileNotFoundException
+		{
+			BufferedReader br = new BufferedReader(new FileReader("UserState.txt"));
+			HashMap<String, String> tempUser = new HashMap<String, String>();
+			String line = "";
+			int count = 0;
+			
+			try
+			{
+				System.out.println("File Reading start");
+				while((line = br.readLine()) != null)
+				{
+					String[] columns = line.split("\t");
+					String ID = columns[0];
+					String State = columns[1];
+					if(count < 30)
+					{
+						tempUser.put(ID, State);
+						count++;
+					}
+					else
+					{
+						tempUser.put(ID, State);
+						count = 0;
+						break;
+					}
+				}
+				System.out.println("File Reading End");
+				
+				System.out.println("setUserList(list) start");
+				ClientHandler ch = new ClientHandler();
+				ch.setUserStateList(tempUser);
+				
+				Set set = tempUser.entrySet();
+				Iterator iterator = set.iterator();
+				while(iterator.hasNext())
+				{
+					Map.Entry mentry = (Map.Entry)iterator.next();
+					System.out.println("key is: " + mentry.getKey() + " & Value is: " + mentry.getValue());
+				}
+				
+				System.out.println("setUserList(list) End");
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	
 }

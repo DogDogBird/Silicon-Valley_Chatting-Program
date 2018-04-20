@@ -86,11 +86,12 @@
 
 
         <ImageView
-            android:id = "@+id/friend1Online"
+            android:id = "@+id/partnerStatus"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+            />
 
         <Button
             android:id = "@+id/PartnerName"

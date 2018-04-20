@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     if(line.contains("LoginSuccessFull@!@!"))
                     {
                         getLoginedInfoFromServer(line);
+
                     }
                 }
 
@@ -160,8 +161,12 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("Name", Name);
                 intent.putExtra("Status", STATUS.BUSY.toString());
                 intent.putExtra("PartnerID",partnerID);
+                editTextPW.setText("");
+                editTextID.setText("");
+
                 Toast.makeText(getApplicationContext(), "Login Successfully", Toast.LENGTH_LONG).show();
                 startActivityForResult(intent, REQUEST_CODE_MENU);
+
             }
             else
             {
@@ -251,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
             loginedUser.set_PartnerID(partnerID);
 
             isLogined = true;
-
         }
 
         //if not logined
