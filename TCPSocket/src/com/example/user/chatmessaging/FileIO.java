@@ -27,7 +27,7 @@ public class FileIO  {
 		t1.start();		
 	}
 	//For sign Up
-	public static void UserFileWrite(String ID,String PW, String Name) throws IOException
+	public static void UserFileWrite(String ID,String PW, String Name, String PartnerID) throws IOException
 	{
 		PrintWriter pw = new PrintWriter(new FileWriter("User.txt",true));
 		
@@ -36,6 +36,8 @@ public class FileIO  {
 		pw.print(PW);
 		pw.print(" ");
 		pw.print(Name);
+		pw.print(" ");
+		pw.print(PartnerID);
 		pw.print("\n");
 		pw.close();
 	}
@@ -93,9 +95,11 @@ public class FileIO  {
 				String ID = columns[0];
 				String PW = columns[1];
 				String Name = columns[2];
+				String PartnerID = columns[3];
 				tempUser.set_ID(ID);
 				tempUser.set_PW(PW);
 				tempUser.set_Name(Name);
+				tempUser.set_PartnerID(PartnerID);
 				if(count < 30)
 				{
 					list.add(tempUser);

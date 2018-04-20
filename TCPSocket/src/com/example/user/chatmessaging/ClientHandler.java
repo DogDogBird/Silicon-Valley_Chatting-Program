@@ -124,9 +124,10 @@ public class ClientHandler extends Thread
 					checked_user = CheckUser(ID,PW);
 					if(checked_user != null)
 					{
-						System.out.println("Current User: " + checked_user.get_ID());
-						System.out.println("Current User: " + checked_user.get_PW());
-						System.out.println("Current User: " + checked_user.get_Name());
+						System.out.println("Current User ID: " + checked_user.get_ID());
+						System.out.println("Current User PW: " + checked_user.get_PW());
+						System.out.println("Current User Name: " + checked_user.get_Name());
+						System.out.println("Current User partner ID: " + checked_user.get_partnerID());
 					}
 					else if(checked_user == null)
 					{
@@ -152,6 +153,7 @@ public class ClientHandler extends Thread
 	    				checked_user.set_PW(PW);
 	    				checked_user.set_Name(list.get(i).get_Name());
 	    				checked_user.set_Status(STATUS.ONLINE);//isLogin = true;
+	    				checked_user.set_PartnerID(list.get(i).get_partnerID());
 	    				sendLoginedUserInfoToClient();
 	    				return list.get(i);
 	    			}
@@ -165,7 +167,7 @@ public class ClientHandler extends Thread
 	        	
 	        	if(checked_user.get_status() == (STATUS.ONLINE))
 				{
-					dos.writeUTF("LoginSuccessFull@!@!" + ":" + "LoginedUserID_" + checked_user.get_ID() + ":" + "LoginedUserPW_" + checked_user.get_PW() + ":" + "LoginedUserName_" + checked_user.get_Name());
+					dos.writeUTF("LoginSuccessFull@!@!" + ":" + "LoginedUserID_" + checked_user.get_ID() + ":" + "LoginedUserPW_" + checked_user.get_PW() + ":" + "LoginedUserName_" + checked_user.get_Name() +  ":" + "LoginedUserPartnerID_" + checked_user.get_partnerID());
 					System.out.println("logined");
 					dos.flush();
 				}
@@ -253,6 +255,7 @@ public class ClientHandler extends Thread
 	        	String SignUpID = "";
 	        	String SignUpPW = "";
 	        	String SignUpName = "";
+	        	String PartnerID = "";
 	        	FileIO file = new FileIO();
 	        	if(data.contains("SignUpD_"))
 				{
@@ -263,7 +266,9 @@ public class ClientHandler extends Thread
 					System.out.println("SignUpPW: " + SignUpPW);
 					SignUpName = splited[2].replace("SignUpName_", "");
 					System.out.println("SignUpName: " + SignUpName);
-					file.UserFileWrite(SignUpID, SignUpPW, SignUpName);
+					PartnerID = splited[3].replace("PartnerID_", "");
+					System.out.println("PartnerID: " + PartnerID);
+					file.UserFileWrite(SignUpID, SignUpPW, SignUpName,PartnerID);
 				}
 	        }
 	    }

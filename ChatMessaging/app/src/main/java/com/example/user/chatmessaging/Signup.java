@@ -22,6 +22,7 @@ public class Signup extends AppCompatActivity {
     EditText ID;
     EditText PW ;
     EditText Name;
+    EditText PartnerID;
 
     Socket mSocket;
     DataOutputStream Dout;
@@ -44,6 +45,7 @@ public class Signup extends AppCompatActivity {
         ID = (EditText) findViewById(R.id.editID);
         PW = (EditText) findViewById(R.id.editPW);
         Name = (EditText) findViewById(R.id.editName);
+        PartnerID = (EditText) findViewById(R.id.editPartner);
 
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.execute();
@@ -124,7 +126,8 @@ public class Signup extends AppCompatActivity {
             {
                 if(ID.getText().toString().length()>=1 && PW.getText().toString().length()>=1 && Name.getText().toString().length() >=1)
                 {
-                    Dout.writeUTF("SignUpD_" + ID.getText().toString() + ":" + "SignUpPW_" + PW.getText().toString() + ":" + "SignUpName_" + Name.getText().toString());
+                    Dout.writeUTF("SignUpD_" + ID.getText().toString() + ":" + "SignUpPW_" + PW.getText().toString() +
+                            ":" + "SignUpName_" + Name.getText().toString()+ ":" + "PartnerID_" + PartnerID.getText().toString());
                 }
                 Dout.flush();
             }

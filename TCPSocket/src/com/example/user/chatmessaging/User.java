@@ -18,6 +18,7 @@ public class User {
 	private String ID;
 	private String PW;
 	private String Name;
+	private String PartnerID;
 	
 	private STATUS status;
 	
@@ -38,6 +39,10 @@ public class User {
 	{
 		return status;
 	}
+	public String get_partnerID()
+	{
+		return PartnerID;
+	}
 	
 	public void set_ID(String _ID)
 	{
@@ -50,6 +55,10 @@ public class User {
 	public void set_Name(String _Name)
 	{
 		Name = _Name;
+	}
+	public void set_PartnerID(String _PartnerID)
+	{
+		PartnerID = _PartnerID;
 	}
 	
 	public void set_Status(STATUS stat)

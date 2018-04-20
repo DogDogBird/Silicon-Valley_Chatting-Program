@@ -3,13 +3,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="10"
     >
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="10">
+        android:weightSum="10"
+        android:layout_weight="0.5">
 
         <Button
             android:layout_weight="1"
@@ -59,17 +62,28 @@
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#aaaaaa">
+        android:background="#aaaaaa"
+        >
     </View>
+
+    <ImageButton
+        android:layout_marginTop="50dp"
+        android:layout_weight="15"
+        android:id = "@+id/myImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        />
 
 
     <LinearLayout
         android:orientation="horizontal"
         android:id = "@+id/friend1"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="#66ff7f00">
+
 
         <ImageView
             android:id = "@+id/friend1Online"
@@ -77,15 +91,9 @@
             android:layout_height="20dp"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"/>
-        <ImageButton
-            android:id = "@+id/friend1Image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center"
-            />
+
         <Button
-            android:id = "@+id/friend1name"
+            android:id = "@+id/PartnerName"
             android:layout_width="110dp"
             android:layout_height="60dp"
             android:text = "kyubin"
@@ -110,105 +118,6 @@
             android:layout_marginLeft="10dp"/>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id = "@+id/friend2"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_marginTop="20dp"
-        android:background="#66ff7f00">
-
-        <ImageView
-            android:id = "@+id/friend2Online"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"/>
-        <ImageButton
-            android:id = "@+id/friend2Image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center"
-            />
-        <Button
-            android:id = "@+id/friend2name"
-            android:layout_width="110dp"
-            android:layout_height="60dp"
-            android:text = "Tami"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:textSize = "20dp"
-            android:textStyle="bold"
-            android:onClick="onButtonFriend2Clicked"
-            android:textColor="#ff7f00"
-            android:background="#00ff7f00"
-            android:gravity="left|center"
-            android:paddingLeft="8dp"/>
-        <TextView
-            android:id = "@+id/friend2stateMessage"
-            android:layout_width="140dp"
-            android:layout_height="60dp"
-            android:text="Welcome!"
-            android:textSize="15dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginLeft="10dp"
-
-            android:textColor="#000000"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id = "@+id/friend3"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_marginTop="20dp"
-        android:background="#66ff7f00">
-
-        <ImageView
-            android:id = "@+id/friend3Online"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"/>
-        <ImageButton
-            android:id = "@+id/friend3Image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center"
-            />
-        <Button
-            android:id = "@+id/friend3name"
-            android:layout_width="110dp"
-            android:layout_height="60dp"
-            android:text = "sdogdog"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:textSize = "20dp"
-            android:textStyle="bold"
-            android:onClick="onButtonFriend3Clicked"
-            android:textColor="#ff7f00"
-            android:background="#00ff7f00"
-            android:gravity="left|center"
-            android:paddingLeft="8dp"/>
-        <TextView
-            android:id = "@+id/friend3stateMessage"
-            android:layout_width="140dp"
-            android:layout_height="60dp"
-            android:text="Welcome!"
-            android:textSize="15dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginLeft="10dp"
-
-            android:textColor="#000000"/>
-
-    </LinearLayout>
-
 
 
 </LinearLayout>

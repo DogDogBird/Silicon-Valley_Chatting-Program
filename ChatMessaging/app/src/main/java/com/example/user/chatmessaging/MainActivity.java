@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     static String ID = "";
     static String PW  = "";
     static String Name = "";
+    static String partnerID = "";
 
     static boolean isLogined = false;
 
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("PW", PW);
                 intent.putExtra("Name", Name);
                 intent.putExtra("Status", STATUS.BUSY.toString());
+                intent.putExtra("PartnerID",partnerID);
                 Toast.makeText(getApplicationContext(), "Login Successfully", Toast.LENGTH_LONG).show();
                 startActivityForResult(intent, REQUEST_CODE_MENU);
             }
@@ -204,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void getLoginedInfoFromServer(String data) throws IOException
     {
+        //System.out.println(data);
         String[] splited = data.split(":");
 
         if(splited[0].contains("LoginSuccessFull@!@!"))
@@ -214,6 +217,8 @@ public class MainActivity extends AppCompatActivity {
             //System.out.println("LoginedUserPW_: " + PW);
             Name = splited[3].replace("LoginedUserName_", "");
             //System.out.println("LoginedUserName_: " + PW);
+            partnerID = splited[4].replace("LoginedUserPartnerID_","");
+
 
             System.out.println("Login Successfully");
             if(splited[1].contains("LoginedUserID_"))
@@ -233,11 +238,18 @@ public class MainActivity extends AppCompatActivity {
                 Name = splited[3].replace("LoginedUserName_", "");
                 System.out.println("LoginedUserName_: " + Name);
             }
+            if(splited[4].contains("LoginedUserPartnerID_"))
+            {
+                partnerID = splited[4].replace("LoginedUserPartnerID_","");
+                System.out.println("LoginedUserPartnerID_: " + partnerID);
+            }
 
             loginedUser.set_ID(ID);
             loginedUser.set_PW(PW);
             loginedUser.set_Name(Name);
             loginedUser.set_Status(STATUS.BUSY);
+            loginedUser.set_PartnerID(partnerID);
+
             isLogined = true;
 
         }
