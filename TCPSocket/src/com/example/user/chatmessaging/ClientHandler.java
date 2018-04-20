@@ -181,15 +181,17 @@ public class ClientHandler extends Thread
 	        	String chatting = "";
 	        	String senderID = "";
 	        	String receiverID = "";
+	        	String timeStamp = "";
 	        	FileIO file = new FileIO();
 	        	if(data.contains("ChattingText_"))
 				{
-	        		String [] splited = data.split(":");
+	        		String [] splited = data.split(":::");
 	        		senderID = splited[0].replace("ChattingText_", "");
 	        		receiverID = splited[1];
 	        		chatting = splited[2];
+	        		timeStamp = splited[3];
 	        		
-	        		file.ChattingFileWrite(senderID, receiverID, chatting);
+	        		file.ChattingFileWrite(senderID, receiverID, chatting, timeStamp);
 	        		
 	        		System.out.println(senderID + ": " + chatting + " to " + receiverID);
 				}
@@ -200,20 +202,21 @@ public class ClientHandler extends Thread
 	        	String senderID = "";
 	        	String receiverID = "";
 	        	String filename = "";
+	        	String timeStamp = "";
 	        	String text = "";
 	        	FileIO file = new FileIO();
 	        	System.out.println(data);
 	        	if(data.contains("senderID_"))
 	        	{
-	        		String [] splited = data.split(":");
+	        		String [] splited = data.split(":::");
 	        		senderID = splited[0].replace("senderID_", "");
 	        		receiverID = splited[1].replace("receiverID_", "");
 	        		filename = senderID + receiverID + ".txt";
 	        	}
 	        	try 
 	        	{
-	        		file.ChattingFileWrite(senderID, receiverID, text); //if there is no file on the folder
-					file.UserChattingRead(senderID, receiverID, text);//Read file
+	        		file.ChattingFileWrite(senderID, receiverID, text,timeStamp); //if there is no file on the folder
+					file.UserChattingRead(senderID, receiverID);//Read file
 		        	//dos.writeUTF("ChattingList_");
 				} 
 	        	catch (IOException e) 
@@ -227,8 +230,9 @@ public class ClientHandler extends Thread
 					String printsenderID = msgList.get(i).getSenderID();
 					String printreceiverID = msgList.get(i).getReceiverID();
 					String printMessage = msgList.get(i).getMsg();
+					String printTimeStamp = msgList.get(i).getTimeStamp();
 					
-					System.out.println("Sender: " + printsenderID + "/receiver: " + printreceiverID + "/Message: " + printMessage);
+					System.out.println("Sender: " + printsenderID + "/receiver: " + printreceiverID + "/Message: " + printMessage + " " + printTimeStamp);
 				}
 					try 
 					{

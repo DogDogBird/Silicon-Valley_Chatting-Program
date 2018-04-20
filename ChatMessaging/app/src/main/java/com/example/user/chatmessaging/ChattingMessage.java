@@ -6,6 +6,7 @@ public class ChattingMessage implements Serializable
     private String senderID;
     private String receiverID;
     private String msg;
+    private String timeStamp;
 
     public void setSenderID(String _senderID)
     {
@@ -30,5 +31,13 @@ public class ChattingMessage implements Serializable
     public String getMsg()
     {
         return msg;
+    }
+    public String getTimeStamp()
+    {
+        return timeStamp;
+    }
+    public void setTimeStamp(String _timeStamp)
+    {
+        timeStamp = _timeStamp;
     }
 }

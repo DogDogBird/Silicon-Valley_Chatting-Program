@@ -66,6 +66,7 @@ public class FriendMenu extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), Chatting.class);
         intent.putExtra("SenderID",ID);
         intent.putExtra("ReceiverID","kyubin");
+        intent.putExtra("Status",STATUS.ONLINE.toString());
         startActivityForResult(intent,REQUEST_CODE_MENU2);
     }
 
@@ -74,6 +75,14 @@ public class FriendMenu extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), Chatting.class);
         intent.putExtra("SenderID",ID);
         intent.putExtra("ReceiverID","Tami");
+        startActivityForResult(intent,REQUEST_CODE_MENU2);
+    }
+
+    public void onButtonFriend3Clicked(View v)
+    {
+        Intent intent = new Intent(getApplicationContext(), Chatting.class);
+        intent.putExtra("SenderID",ID);
+        intent.putExtra("ReceiverID","ass7989");
         startActivityForResult(intent,REQUEST_CODE_MENU2);
     }
 }
