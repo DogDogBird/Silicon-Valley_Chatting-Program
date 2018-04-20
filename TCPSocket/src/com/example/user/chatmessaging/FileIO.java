@@ -41,7 +41,7 @@ public class FileIO  {
 	}
 	
 	//For saving chatting
-	public static void ChattingFileWrite(String SenderID, String ReceiverID, String Text) throws IOException
+	public static void ChattingFileWrite(String SenderID, String ReceiverID, String Text, String timeStamp) throws IOException
 	{		
 		String filename = SenderID + ReceiverID + ".txt";
 		String filename2 = ReceiverID + SenderID + ".txt";
@@ -55,6 +55,8 @@ public class FileIO  {
 			pw.print(ReceiverID);
 			pw.print("\t");
 			pw.print(Text);
+			pw.print("\t");
+			pw.print(timeStamp);
 			pw.print("\n");
 			
 			pw2.print(SenderID);
@@ -62,6 +64,8 @@ public class FileIO  {
 			pw2.print(ReceiverID);
 			pw2.print("\t");
 			pw2.print(Text);
+			pw2.print("\t");
+			pw2.print(timeStamp);
 			pw2.print("\n");
 		
 			System.out.println("file written");
@@ -122,7 +126,7 @@ public class FileIO  {
 	}
 	
 	//Read User -> Thread
-		public static synchronized void UserChattingRead(String senderID,String receiverID,String text) throws IOException
+		public static synchronized void UserChattingRead(String senderID,String receiverID) throws IOException
 		{
 			String Filename = senderID + receiverID + ".txt";
 			
@@ -146,9 +150,11 @@ public class FileIO  {
 						String SenderID = columns[0];
 						String ReceiverID = columns[1];
 						String Text = columns[2];
+						String TimeStamp = columns[3];
 						tempMsg.setSenderID(SenderID);
 						tempMsg.setReceiverID(ReceiverID);
 						tempMsg.setMsg(Text);
+						tempMsg.setTimeStamp(TimeStamp);
 					
 						msgList.add(tempMsg);					
 					}
