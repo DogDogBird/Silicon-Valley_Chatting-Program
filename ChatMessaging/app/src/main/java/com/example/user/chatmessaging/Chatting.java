@@ -30,14 +30,21 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
 
 
 public class Chatting extends AppCompatActivity {
 
+    long mNow;
+    Date mDate;
+    SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
     private String html = "";
     ProgressHandler mHandler;
-    TextView textView;
-    TextView textView1;
+    TextView timeTextView;
 
     private int value = 0;
     private boolean isRunning = true;
@@ -45,8 +52,6 @@ public class Chatting extends AppCompatActivity {
     private EditText EDITTEXT;
     String tempString;
 
-    private BufferedReader networkReader;
-    private BufferedWriter networkWriter;
 
     private String ip = "61.255.4.166";//IP
     public static int SERVERPORT = 7777;
@@ -59,6 +64,8 @@ public class Chatting extends AppCompatActivity {
 
     static String senderID;
     static String receiverID;
+    static String timeStamp;
+    static STATUS status;
 
     static boolean sendButtonClicked;
 
@@ -77,9 +84,11 @@ public class Chatting extends AppCompatActivity {
             senderID = (String) extras.get("SenderID");
             receiverID = (String) extras.get("ReceiverID");
         }
+        status = STATUS.ONLINE;
         setTitle(receiverID);
 
         EDITTEXT = (EditText) findViewById(R.id.editText);
+        timeTextView = (TextView) findViewById(R.id.timeText);
 
         sendButtonClicked = false;
 
@@ -124,8 +133,9 @@ public class Chatting extends AppCompatActivity {
 
         public void handleMessage(Message msg)
         {
-            GregorianCalendar gcalendar = new GregorianCalendar();
-//            textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
+            //gcalendar = new GregorianCalendar();
+//          textView1.setText(gcalendar.get(Calendar.HOUR) + ":" + gcalendar.get(Calendar.MINUTE) + ":"+ gcalendar.get(Calendar.SECOND));
+            timeTextView.setText(getTime());
         }
     }
 
@@ -133,6 +143,7 @@ public class Chatting extends AppCompatActivity {
     {
         sendButtonClicked = true;
         tempString = EDITTEXT.getText().toString();
+        timeStamp = getTime();
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.execute();
         Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_LONG).show();
@@ -247,16 +258,19 @@ public class Chatting extends AppCompatActivity {
                 {
                     t[i] = new TextView(getApplicationContext());
                     t[i].setLayoutParams(dim);
-                    t[i].setText(msgList.get(i).getMsg());
+                    t[i].setText(msgList.get(i).getTimeStamp() + "\n" + msgList.get(i).getMsg());
                     t[i].setTextSize(20);
                     if (msgList.get(i).getSenderID().equals(senderID))
                     {
                         t[i].setGravity(Gravity.RIGHT);
+                        t[i].setBackgroundResource(R.drawable.my_message_bg);
                     }
                     else
                     {
                         t[i].setGravity(Gravity.LEFT);
+                        t[i].setBackgroundResource(R.drawable.opponent_message_bg);
                     }
+                    t[i].setPadding(16,16,16,16);
                     root.addView(t[i]);
                 }
 
@@ -270,9 +284,12 @@ public class Chatting extends AppCompatActivity {
             {
                 TextView tempTextView;
                 tempTextView = new TextView(getApplicationContext());
-                tempTextView.setText(EDITTEXT.getText().toString());
+                tempTextView.setText(timeStamp + "\n" + EDITTEXT.getText().toString());
                 tempTextView.setTextSize(20);
                 tempTextView.setGravity(Gravity.RIGHT);
+                tempTextView.setPadding(16,16,16,16);
+                tempTextView.setBackgroundResource(R.drawable.my_message_bg);
+
                 root.addView(tempTextView);
             }
             sendButtonClicked = false;
@@ -290,14 +307,14 @@ public class Chatting extends AppCompatActivity {
                 System.out.println(tempString);
                 if(sendButtonClicked)
                 {
-                    System.out.println("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
-                    Dout.writeUTF("ChattingText_" + senderID + ":" + receiverID + ":" + tempString);
+                    System.out.println("ChattingText_" + senderID + ":::" + receiverID + ":::" + tempString +":::"+timeStamp);
+                    Dout.writeUTF("ChattingText_" + senderID + ":::" + receiverID + ":::" + tempString + ":::" + timeStamp);
                     Dout.flush();
                 }
                 else
                 {
-                    System.out.println("senderID_" + senderID + ":" + "receiverID_" + receiverID);
-                    Dout.writeUTF("senderID_" + senderID + ":" + "receiverID_" + receiverID);
+                    System.out.println("senderID_" + senderID + ":::" + "receiverID_" + receiverID);
+                    Dout.writeUTF("senderID_" + senderID + ":::" + "receiverID_" + receiverID);
                     Dout.flush();
                 }
             }
@@ -317,6 +334,9 @@ public class Chatting extends AppCompatActivity {
             }
         }
     }
-
-
+    private String getTime(){
+        mNow = System.currentTimeMillis()+32400000;
+        mDate = new Date(mNow);
+        return mFormat.format(mDate);
+    }
 }

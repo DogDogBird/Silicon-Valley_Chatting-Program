@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("ID", ID);
                 intent.putExtra("PW", PW);
                 intent.putExtra("Name", Name);
-                intent.putExtra("Status", STATUS.ONLINE.toString());
+                intent.putExtra("Status", STATUS.BUSY.toString());
                 Toast.makeText(getApplicationContext(), "Login Successfully", Toast.LENGTH_LONG).show();
                 startActivityForResult(intent, REQUEST_CODE_MENU);
             }
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
             loginedUser.set_ID(ID);
             loginedUser.set_PW(PW);
             loginedUser.set_Name(Name);
-            loginedUser.set_Status(STATUS.ONLINE);
+            loginedUser.set_Status(STATUS.BUSY);
             isLogined = true;
 
         }
