@@ -46,6 +46,8 @@ public class FileIO  {
 		pw.close();
 	}
 	
+	
+	
 	//For saving chatting
 	public static void ChattingFileWrite(String SenderID, String ReceiverID, String Text, String timeStamp) throws IOException
 	{		
@@ -117,6 +119,7 @@ public class FileIO  {
 				}
 			}
 			System.out.println("File Reading End");
+			br.close();
 			
 			System.out.println("setUserList(list) start");
 			ClientHandler ch = new ClientHandler();
@@ -171,7 +174,7 @@ public class FileIO  {
 					{
 						System.out.println(msgList.get(i).getSenderID() + ":" + msgList.get(i).getReceiverID() + ":" + msgList.get(i).getMsg());
 					}
-					
+					br.close();
 					ClientHandler ch = new ClientHandler();
 					ch.setMsgList(msgList);
 				}
@@ -188,12 +191,107 @@ public class FileIO  {
 		public static void UserStateFileWrite(String ID,String State) throws IOException
 		{
 			PrintWriter pw = new PrintWriter(new FileWriter("UserState.txt",true));
+			BufferedReader br = new BufferedReader(new FileReader("UserState.txt"));		
+			String line = "";
 			
+			//if there is an existing ID
+			while((line = br.readLine())!= null)
+			{
+				System.out.println("UserState File writing" + line);
+				String[] columns = line.split("\t");
+				String ID2 = columns[0];
+					
+				if(ID2.equals(ID))
+				{
+					System.out.println("existing ID");
+					return;
+				}
+			}
+				
 			pw.print(ID);
 			pw.print("\t");
 			pw.print(State);
 			pw.print("\n");
 			pw.close();
+			br.close();
+		}
+		
+		public static void updateUserStateFile(String ID, String State) throws IOException
+		{
+			System.out.println("update User State File From FileIO");
+			String oldFileName = "UserState.txt";
+			String tempFileName = "temp.txt";
+			System.out.println("file made");
+					
+			BufferedReader br = new BufferedReader(new FileReader(oldFileName));
+			BufferedWriter pw = new BufferedWriter(new FileWriter(tempFileName));
+			HashMap<String, String> tempUser = new HashMap<String, String>();
+			String line = "";
+			int count = 0;
+			
+			try
+			{
+				System.out.println("File Reading start");
+				while((line = br.readLine()) != null)
+				{
+					String[] columns = line.split("\t");
+					String ID2 = columns[0];
+					String State2 = columns[1];
+					
+					if(!ID.equals(ID2))
+					{
+						System.out.println("Existing ID");
+						System.out.println("ID: " +ID + "ID2" + ID2 );
+						System.out.println(State2);
+						pw.write(ID2);
+						pw.write("\t");
+						pw.write(State2);
+						pw.write("\n");
+					}
+					else
+					{
+						System.out.println("No existing ID");
+						System.out.println("ID: " +ID + "ID2" + ID2 );
+						System.out.println(State);
+						pw.write(ID2);
+						pw.write("\t");
+						pw.write(State);
+						pw.write("\n");
+					}
+				}
+				br.close();
+				pw.close();
+				System.gc();
+				
+				File oldFile = new File(oldFileName);
+				if(oldFile.exists())
+				{
+					oldFile.setWritable(true);
+					System.out.println("File exists");
+					if(oldFile.delete())
+					{
+						System.out.println("Old File deleted");
+					}
+					else
+					{
+						System.out.println("can't delete");
+					}
+				}
+				else
+				{
+					System.out.println("File doesn't exist");
+				}
+				
+				File tempFile = new File(tempFileName);
+				tempFile.renameTo(oldFile);
+				System.out.println("Renaming done");
+				
+				System.out.println("State Update Done");
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		public static void ReadUserState() throws FileNotFoundException

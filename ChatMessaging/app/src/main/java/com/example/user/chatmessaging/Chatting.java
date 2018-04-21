@@ -69,6 +69,8 @@ public class Chatting extends AppCompatActivity {
 
     static boolean sendButtonClicked;
     static boolean refreshButtonClicked;
+    static boolean BackButtonClicked;
+    static boolean isFirst;
 
     static List<ChattingMessage> msgList;
     static LinearLayout root;
@@ -78,6 +80,9 @@ public class Chatting extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
+
+        BackButtonClicked = false;
+        isFirst = false;
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)
@@ -98,6 +103,10 @@ public class Chatting extends AppCompatActivity {
 
         myAsyncTask = new MyAsyncTask();
         myAsyncTask.execute();
+        isFirst = true;
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute();
+        isFirst = false;
     }
 
     public void onStart()
@@ -161,6 +170,9 @@ public class Chatting extends AppCompatActivity {
     //click back button
     public void onButtonBackClicked(View v)
     {
+        BackButtonClicked = true;
+        myAsyncTask = new MyAsyncTask();
+        myAsyncTask.execute();
         Intent intent =new Intent();
         intent.putExtra("name","out of chatting");
 
@@ -252,6 +264,7 @@ public class Chatting extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
             return null;
         }
 
@@ -309,6 +322,7 @@ public class Chatting extends AppCompatActivity {
             }
             sendButtonClicked = false;
             refreshButtonClicked = false;
+            BackButtonClicked = false;
         }
 
     }
@@ -321,16 +335,30 @@ public class Chatting extends AppCompatActivity {
             try
             {
                 System.out.println(tempString);
-                if(sendButtonClicked)
+                if(sendButtonClicked && isFirst)
                 {
                     System.out.println("ChattingText_" + senderID + ":::" + receiverID + ":::" + tempString +":::"+timeStamp);
                     Dout.writeUTF("ChattingText_" + senderID + ":::" + receiverID + ":::" + tempString + ":::" + timeStamp);
                     Dout.flush();
                 }
-                else
+                else if(!sendButtonClicked && isFirst)
                 {
                     System.out.println("senderID_" + senderID + ":::" + "receiverID_" + receiverID);
                     Dout.writeUTF("senderID_" + senderID + ":::" + "receiverID_" + receiverID);
+                    Dout.flush();
+                }
+
+                if(!BackButtonClicked && !isFirst)
+                {
+                    Dout.writeUTF(senderID + ":" + "StatusIs_ONLINE:::" + "CheckUsersState_:" + receiverID);
+                    System.out.println(senderID + ":" + "StatusIs_ONLINE:::" + "CheckUsersState_:" + receiverID);
+                    Dout.flush();
+                }
+
+                else if(BackButtonClicked && !isFirst)
+                {
+                    Dout.writeUTF(senderID + ":" + "StatusIs_BUSY:::" + "CheckUsersState_:" + receiverID);
+                    System.out.println(senderID + ":" + "StatusIs_BUSY:::" + "CheckUsersState_:" + receiverID);
                     Dout.flush();
                 }
             }

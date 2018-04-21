@@ -298,19 +298,26 @@ public class ClientHandler extends Thread
 	        {
 	        	System.out.println("Writing User State in Server");
 	        	FileIO file = new FileIO();
+	        
 	        	String ID = "";
 	        	String[] splited = statedata[0].split(":");
 	        	if(data.contains("StatusIs_OFFLINE"))
             	{
-	        		file.UserStateFileWrite(splited[0],"OFFLINE");
+	        		System.out.println("data contains Status os offline");
+	        		file.UserStateFileWrite(splited[0], "OFFLINE");
+	        		file.updateUserStateFile(splited[0],"OFFLINE");
             	}
 	        	else if(data.contains("StatusIs_BUSY"))
             	{
-	        		file.UserStateFileWrite(splited[0],"BUSY");
+	        		System.out.println("data contains Status os busy");
+	        		file.UserStateFileWrite(splited[0], "BUSY");
+	        		file.updateUserStateFile(splited[0],"BUSY");
             	}
 	        	else if(data.contains("StatusIs_ONLINE"))
             	{
-	        		file.UserStateFileWrite(splited[0],"ONLINE");
+	        		System.out.println("data contains Status os online");
+	        		file.UserStateFileWrite(splited[0], "ONLINE");
+	        		file.updateUserStateFile(splited[0],"ONLINE");
             	}
 	        }
 	        public void sendUserState() throws IOException
@@ -328,7 +335,14 @@ public class ClientHandler extends Thread
 					Map.Entry mentry = (Map.Entry)iterator.next();
 					if(mentry.getKey().equals(PartnerID))
 					{
-						dos.writeUTF("State_" + mentry.getValue());
+						dos.writeUTF("State_" + mentry.getValue().toString());
+						System.out.println("State_" + mentry.getValue().toString());
+						dos.flush();
+					}
+					else
+					{
+						dos.writeUTF("State_OFFLINE");
+						System.out.println("State_OFFLINE");
 						dos.flush();
 					}
 					System.out.println("key is: " + mentry.getKey() + " & Value is: " + mentry.getValue());

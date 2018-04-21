@@ -44,10 +44,16 @@ public class FriendMenu extends AppCompatActivity {
     static DataInputStream Din;
     Socket mSocket;
 
+    static boolean LogoutButtonClicked ;
+    static boolean OnlineButtomClicked;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_menu);
+
+        LogoutButtonClicked = false;
+
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)
@@ -70,7 +76,7 @@ public class FriendMenu extends AppCompatActivity {
         myImage1 = (ImageButton) findViewById(R.id.myImage);
         String imgFileName = ID.toLowerCase();
         int imgId = getResources().getIdentifier(imgFileName, "drawable",this.getPackageName());
-        System.out.println(imgId);
+        //System.out.println(imgId);
         if(imgId!=0)
         {
             myImage1.setImageResource(imgId);
@@ -92,7 +98,9 @@ public class FriendMenu extends AppCompatActivity {
             {
                 Intent intent = new Intent();
                 setResult(RESULT_OK,intent);
-
+                LogoutButtonClicked = true;
+                myAsyncTask = new MyAsyncTask();
+                myAsyncTask.execute();
                 System.out.print("Logout");
                 finish();
             }
@@ -113,6 +121,7 @@ public class FriendMenu extends AppCompatActivity {
 
     public void onButtonFriend1Clicked(View v)
     {
+        OnlineButtomClicked = true;
         Intent intent = new Intent(getApplicationContext(), Chatting.class);
         intent.putExtra("SenderID",ID);
         intent.putExtra("ReceiverID",PartnerID);
@@ -169,9 +178,12 @@ public class FriendMenu extends AppCompatActivity {
             String line;
             try
             {
+                System.out.println("reading Line");
                 line = Din.readUTF();
+                System.out.println("reading Line" + line);
                 if(line.contains("State_"))
                 {
+                    System.out.println("reading Line" + line);
                     PartnerStatus = line.replace("State_","");
                 }
             }
@@ -190,15 +202,17 @@ public class FriendMenu extends AppCompatActivity {
             int imgId2 = getResources().getIdentifier(imgFileName2, "drawable",getPackageName());
 
             System.out.println("Image ID: @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+ imgId2);
-            if(imgId2 == 0)
+            if(imgId2 != 0)
             {
-                imgId2 = getResources().getIdentifier("offline", "drawable",getPackageName());
                 StatusImage.setImageResource(imgId2);
             }
             else
             {
+                imgId2 = getResources().getIdentifier("offline", "drawable",getPackageName());
                 StatusImage.setImageResource(imgId2);
             }
+            OnlineButtomClicked = false;
+            LogoutButtonClicked = false;
         }
     }
 
@@ -207,11 +221,23 @@ public class FriendMenu extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params)
         {
-            try {
-                Dout.writeUTF(ID + ":" + "StatusIs_BUSY:::" + "CheckUsersState_:" + PartnerID);
-                Dout.flush();
+            try
+            {
+                if(!LogoutButtonClicked)
+                {
+                    Dout.writeUTF(ID + ":" + "StatusIs_BUSY:::" + "CheckUsersState_:" + PartnerID);
+                    System.out.println(ID + ":" + "StatusIs_BUSY:::" + "CheckUsersState_:" + PartnerID);
+                    Dout.flush();
+                }
 
-            } catch (IOException e) {
+                else if(LogoutButtonClicked)
+                {
+                    Dout.writeUTF(ID + ":" + "StatusIs_OFFLINE:::" + "CheckUsersState_:" + PartnerID);
+                    System.out.println(ID + ":" + "StatusIs_OFFLINE:::" + "CheckUsersState_:" + PartnerID);
+                    Dout.flush();
+                }
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
             return null;

@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
                     if(line.contains("LoginSuccessFull@!@!"))
                     {
                         getLoginedInfoFromServer(line);
-
                     }
                 }
 
@@ -197,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
                     Dout.writeUTF("LoginID_" + ID + ":" + "LoginPW_" + PW);
                 }
                 Dout.flush();
+
+
             }
             catch (IOException e)
             {

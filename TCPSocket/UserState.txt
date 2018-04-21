@@ -1,6 +1,2 @@
 boy	BUSY
-boy	BUSY
-boy	BUSY
-boy	BUSY
-girl	BUSY
 girl	BUSY
