@@ -290,6 +290,8 @@ public class ClientHandler extends Thread
 							return;
 						}
 					}
+					dos.writeUTF("SignUpSuccessfull@!#!@#");
+					dos.flush();
 					file.UserFileWrite(SignUpID, SignUpPW, SignUpName,PartnerID);
 				}
 	        }
@@ -338,15 +340,12 @@ public class ClientHandler extends Thread
 						dos.writeUTF("State_" + mentry.getValue().toString());
 						System.out.println("State_" + mentry.getValue().toString());
 						dos.flush();
+						return;
 					}
-					else
-					{
-						dos.writeUTF("State_OFFLINE");
-						System.out.println("State_OFFLINE");
-						dos.flush();
-					}
-					System.out.println("key is: " + mentry.getKey() + " & Value is: " + mentry.getValue());
 				}
+				dos.writeUTF("State_OFFLINE");
+				System.out.println("State_OFFLINE");
+				dos.flush();
 				
 	        }
 	    }

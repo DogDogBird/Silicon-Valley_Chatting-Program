@@ -236,10 +236,13 @@ public class Chatting extends AppCompatActivity {
                 {
                     try
                     {
-                        msgList = new ArrayList<ChattingMessage>();
-                        Oin = new ObjectInputStream(mSocket.getInputStream());
-                        msgList = (ArrayList<ChattingMessage>) Oin.readObject();
-                        Oin.close();
+                        if(!isFirst)
+                        {
+                            msgList = new ArrayList<ChattingMessage>();
+                            Oin = new ObjectInputStream(mSocket.getInputStream());
+                            msgList = (ArrayList<ChattingMessage>) Oin.readObject();
+                            Oin.close();
+                        }
                     }
                     catch (ClassNotFoundException e)
                     {
@@ -266,56 +269,50 @@ public class Chatting extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid)
         {
-
-            root = (LinearLayout) findViewById(R.id.rl);
-            root.setVerticalGravity(Gravity.BOTTOM);
-            t = new TextView[100];
-            LinearLayout.LayoutParams dim = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            if(refreshButtonClicked)
+            if(!isFirst)
             {
-                getCurrentFocus().clearFocus();
-            }
-            if(!sendButtonClicked)
-            {
-                for (int i = 0; i < msgList.size(); i++)
-                {
-                    t[i] = new TextView(getApplicationContext());
-                    t[i].setLayoutParams(dim);
-                    t[i].setText(msgList.get(i).getTimeStamp() + "\n" + msgList.get(i).getMsg());
-                    t[i].setTextSize(20);
-                    if (msgList.get(i).getSenderID().equals(senderID))
-                    {
-                        t[i].setGravity(Gravity.RIGHT);
-                        t[i].setBackgroundResource(R.drawable.my_message_bg);
-                    }
-                    else
-                    {
-                        t[i].setGravity(Gravity.LEFT);
-                        t[i].setBackgroundResource(R.drawable.opponent_message_bg);
-                    }
-                    t[i].setPadding(16,16,16,16);
-                    root.addView(t[i]);
+                root = (LinearLayout) findViewById(R.id.rl);
+                root.setVerticalGravity(Gravity.BOTTOM);
+                t = new TextView[100];
+                LinearLayout.LayoutParams dim = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                if (refreshButtonClicked) {
+                    getCurrentFocus().clearFocus();
                 }
-            }
-            else
-            {
-                TextView tempTextView;
-                tempTextView = new TextView(getApplicationContext());
-                tempTextView.setText(timeStamp + "\n" + tempString);
-                tempTextView.setTextSize(20);
-                tempTextView.setGravity(Gravity.RIGHT);
-                tempTextView.setPadding(16,16,16,16);
-                tempTextView.setBackgroundResource(R.drawable.my_message_bg);
+                if (!sendButtonClicked) {
+                    for (int i = 0; i < msgList.size(); i++) {
+                        t[i] = new TextView(getApplicationContext());
+                        t[i].setLayoutParams(dim);
+                        t[i].setText(msgList.get(i).getTimeStamp() + "\n" + msgList.get(i).getMsg());
+                        t[i].setTextSize(20);
+                        if (msgList.get(i).getSenderID().equals(senderID)) {
+                            t[i].setGravity(Gravity.RIGHT);
+                            t[i].setBackgroundResource(R.drawable.my_message_bg);
+                        } else {
+                            t[i].setGravity(Gravity.LEFT);
+                            t[i].setBackgroundResource(R.drawable.opponent_message_bg);
+                        }
+                        t[i].setPadding(16, 16, 16, 16);
+                        root.addView(t[i]);
+                    }
+                } else {
+                    TextView tempTextView;
+                    tempTextView = new TextView(getApplicationContext());
+                    tempTextView.setText(timeStamp + "\n" + tempString);
+                    tempTextView.setTextSize(20);
+                    tempTextView.setGravity(Gravity.RIGHT);
+                    tempTextView.setPadding(16, 16, 16, 16);
+                    tempTextView.setBackgroundResource(R.drawable.my_message_bg);
 
-                root.addView(tempTextView);
+                    root.addView(tempTextView);
+                }
             }
             sendButtonClicked = false;
             refreshButtonClicked = false;
-            BackButtonClicked = false;
 
             if(!isFirst)
             {
                 isFirst = true;
+
                 myAsyncTask = new MyAsyncTask();
                 myAsyncTask.execute();
             }

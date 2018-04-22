@@ -110,12 +110,14 @@ public class Signup extends AppCompatActivity {
         {
             try {
                 String line = Din.readUTF();
+                System.out.println(line);
                 if(line.contains("ID Already Exists!@#!@#"))
                 {
                     isSignUp = false;
                 }
-                else
+                else if (line.contains("SignUpSuccessfull@!#!@#"))
                 {
+                    System.out.println("Sign up done11111");
                     isSignUp = true;
                 }
             } catch (IOException e) {
@@ -155,6 +157,7 @@ public class Signup extends AppCompatActivity {
                 {
                     Dout.writeUTF("SignUpD_" + ID.getText().toString() + ":" + "SignUpPW_" + PW.getText().toString() +
                             ":" + "SignUpName_" + Name.getText().toString()+ ":" + "PartnerID_" + PartnerID.getText().toString());
+
                 }
                 Dout.flush();
             }
