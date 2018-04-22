@@ -126,6 +126,7 @@ public class FriendMenu extends AppCompatActivity {
         intent.putExtra("SenderID",ID);
         intent.putExtra("ReceiverID",PartnerID);
         intent.putExtra("Status",STATUS.ONLINE.toString());
+        System.out.println("SenderID: " + ID + "Receiver ID: " + PartnerID);
         startActivityForResult(intent,REQUEST_CODE_MENU2);
     }
     private class MyAsyncTask extends AsyncTask<Void,Void,Void>

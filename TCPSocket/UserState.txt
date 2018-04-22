@@ -1,2 +1,3 @@
-boy	BUSY
-girl	BUSY
+boy	OFFLINE
+girl	OFFLINE
+ass7989	OFFLINE
